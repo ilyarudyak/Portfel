@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Portfel</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="long_text">this is a long text0, long text1, long text2, long text3, long text4, long text5</string>
+</resources>

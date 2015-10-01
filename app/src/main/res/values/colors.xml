@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- we use the "Teal" Material Palette -->
+    <color name="primary">#009688</color>       <!-- 500 -->
+    <color name="primary_dark">#00796b</color>  <!-- 700 -->
+    <color name="primary_light">#80cbc4</color> <!-- 200 -->
+    <color name="accent">#ff9100</color>        <!-- A400 Orange -->
+
+    <!-- text colors -->
+    <color name="primary_text">#212121</color>  <!-- Black 87% -->
+    <color name="secondary_text">#757575</color><!-- Black 54% -->
+
+    <!-- other colors-->
+    <color name="white">#ffffff</color>
+    <color name="red">#f44336</color>
+
+    <!-- divider in recycler view -->
+    <color name="divider">#ffaaaaaa</color>
+</resources>
