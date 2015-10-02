@@ -20,7 +20,7 @@
         app:layout_rowWeight="1"
         app:layout_columnWeight="1"
 
-        android:text="GOOG"
+        android:text="DOW"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         />
 
@@ -33,7 +33,7 @@
         app:layout_rowWeight="1"
         app:layout_columnWeight="1"
 
-        android:text="NASDAQ"
+        android:text="US"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         />
 
@@ -50,7 +50,7 @@
         app:layout_gravity="fill_vertical"
         android:gravity="center_vertical|end"
         app:layout_columnWeight="2"
-        android:text="525.50"
+        android:text="16500.50"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         />
 
@@ -63,7 +63,7 @@
         app:layout_rowWeight="1"
         app:layout_columnWeight="1"
 
-        android:text="+1.10"
+        android:text="+15.10"
         android:textColor="@color/primary"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         />

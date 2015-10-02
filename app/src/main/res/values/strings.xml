@@ -10,6 +10,11 @@
     <string name="tab_title_portfolio">portfolio</string>
 
 
+    <!-- market fragment -->
+    <!-- headers in recycler view -->
+    <string name="market_header_indices">Indices</string>
+    <string name="market_header_stocks">Stocks</string>
+
     <!-- misc strings -->
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

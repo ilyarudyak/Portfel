@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="view_holder_image"/>
+    <item type="id" name="view_holder_header"/>
+    <item type="id" name="view_holder_stock"/>
+
+</resources>

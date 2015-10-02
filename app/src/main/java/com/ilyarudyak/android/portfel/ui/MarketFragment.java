@@ -15,6 +15,7 @@
 package com.ilyarudyak.android.portfel.ui;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,11 +50,16 @@ public class MarketFragment extends Fragment {
     public static final String TAG = MarketFragment.class.getSimpleName();
     private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
 
-    private static List<String> SYMBOLS = new ArrayList<>(Arrays.asList("%5EGSPC", "GOOG", "AAPL", "YHOO", "IBM", "FB",
+    private static final int POSITION_IMAGE = 0;
+    private static final int POSITION_HEADER_INDICES = 1;
+    private static final int POSITION_HEADER_STOCKS = 5;
+    private static final int ADDITIONAL_POSITIONS_BEFORE_STOCKS_HEADER = 2;
+    private static final int ADDITIONAL_POSITIONS = 3;
+
+    private static List<String> SYMBOLS = new ArrayList<>(Arrays.asList("GOOG", "AAPL", "YHOO", "IBM", "FB",
             "INTC", "ORCL", "HPQ", "TSLA", "MSFT"));
 
     private RecyclerView mRecyclerView;
-    private ImageView mIndexChartImageView;
     private FloatingActionButton mFAB;
 
     public static MarketFragment newInstance(int position) {
@@ -79,11 +85,6 @@ public class MarketFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_market, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.market_recycler_view);
-        mIndexChartImageView = (ImageView) view.findViewById(R.id.market_index_chart_image_view);
-
-        Picasso.with(getActivity())
-                .load(Config.S_AND_P_URL.toString())
-                .into(mIndexChartImageView);
 
         mFAB = (FloatingActionButton) view.findViewById(R.id.market_fab_add_stock);
         mFAB.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +140,7 @@ public class MarketFragment extends Fragment {
 
     // ------------------- RecyclerView classes -----------------
 
-    private class MarketDataAdapter extends RecyclerView.Adapter<ViewHolder> {
+    private class MarketDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private List<Stock> mStocks;
 
@@ -148,51 +149,107 @@ public class MarketFragment extends Fragment {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View view = getActivity().getLayoutInflater().inflate(
-                    R.layout.list_item_stock, parent, false);
-
-            return new ViewHolder(view);
+            View view;
+            switch (viewType) {
+                case R.id.view_holder_image:
+                    view = getActivity().getLayoutInflater().inflate(
+                            R.layout.market_list_item_image, parent, false);
+                    return new ImageViewHolder(getActivity(), view);
+                case R.id.view_holder_header:
+                    view = getActivity().getLayoutInflater().inflate(
+                            R.layout.market_list_item_header, parent, false);
+                    return new HeaderViewHolder(getActivity(), view);
+                default:
+                    view = getActivity().getLayoutInflater().inflate(
+                            R.layout.market_list_item_stock, parent, false);
+                    return new StockViewHolder(getActivity(), view);
+            }
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            Stock stock = mStocks.get(position);
-
-            String symbol = stock.getSymbol();
-            holder.symbolTextView.setText(symbol);
-
-            String exchange = stock.getStockExchange();
-            holder.exchangeTextView.setText(exchange);
-
-            BigDecimal price = stock.getQuote().getPrice();
-            holder.priceTextView.setText(price.toString());
-
-            BigDecimal changeAbs = stock.getQuote().getChange();
-            holder.changeAbsTextView.setText(Utils.formatChanges(changeAbs, false));
-            if (Utils.isNonNegative(changeAbs)) {
-                holder.changeAbsTextView.setTextColor(getResources().getColor(R.color.primary));
+            Stock stock;
+            if (position == POSITION_IMAGE) {
+                ((ImageViewHolder) holder).bindModel();
+            } else if (position == POSITION_HEADER_INDICES || position == POSITION_HEADER_STOCKS) {
+                ((HeaderViewHolder) holder).bindModel(position);
+            } else if (POSITION_HEADER_INDICES < position && position < POSITION_HEADER_STOCKS) {
+                stock = mStocks.get(position - ADDITIONAL_POSITIONS_BEFORE_STOCKS_HEADER);
+                ((StockViewHolder) holder).bindModel(stock);
             } else {
-                holder.changeAbsTextView.setTextColor(getResources().getColor(R.color.red));
-            }
-
-            BigDecimal changePercent = stock.getQuote().getChangeInPercent();
-            holder.changePercentTextView.setText(Utils.formatChanges(changePercent, true));
-            if (Utils.isNonNegative(changePercent)) {
-                holder.changePercentTextView.setTextColor(getResources().getColor(R.color.primary));
-            } else {
-                holder.changePercentTextView.setTextColor(getResources().getColor(R.color.red));
+                stock = mStocks.get(position - ADDITIONAL_POSITIONS);
+                ((StockViewHolder) holder).bindModel(stock);
             }
         }
 
         @Override
         public int getItemCount() {
-            return mStocks.size();
+            return mStocks.size() + ADDITIONAL_POSITIONS;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            switch (position) {
+                case POSITION_IMAGE:
+                    return R.id.view_holder_image;
+                case POSITION_HEADER_INDICES:
+                    return R.id.view_holder_header;
+                case POSITION_HEADER_STOCKS:
+                    return R.id.view_holder_header;
+                default:
+                    return R.id.view_holder_stock;
+            }
         }
     }
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        private Context context;
+
+        public ImageView indexPlotImageView;
+
+        public ImageViewHolder(Context context, View view) {
+            super(view);
+            this.context = context;
+            indexPlotImageView = (ImageView) view.findViewById(R.id.market_list_item_image_view);
+
+        }
+
+        public void bindModel() {
+            Picasso.with(context)
+                    .load(Config.S_AND_P_URL.toString())
+                    .into(indexPlotImageView);
+        }
+    }
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+
+        private Context context;
+
+        public TextView headerTextView;
+
+        public HeaderViewHolder(Context context, View view) {
+            super(view);
+            this.context = context;
+            headerTextView = (TextView) view.findViewById(R.id.market_list_item_header);
+        }
+
+        public void bindModel(int headerPosition) {
+
+            switch (headerPosition) {
+                case POSITION_HEADER_INDICES:
+                    headerTextView.setText(context.getResources().getString(R.string.market_header_indices));
+                    break;
+                case POSITION_HEADER_STOCKS:
+                    headerTextView.setText(context.getResources().getString(R.string.market_header_stocks));
+                    break;
+            }
+        }
+    }
+    public static class StockViewHolder extends RecyclerView.ViewHolder {
+
+        private Context context;
 
         public TextView symbolTextView;
         public TextView exchangeTextView;
@@ -200,13 +257,44 @@ public class MarketFragment extends Fragment {
         public TextView changeAbsTextView;
         public TextView changePercentTextView;
 
-        public ViewHolder(View view) {
+        public StockViewHolder(Context context, View view) {
             super(view);
+            this.context = context;
             symbolTextView = (TextView) view.findViewById(R.id.list_item_stock_symbol);
             exchangeTextView = (TextView) view.findViewById(R.id.list_item_stock_exchange);
             priceTextView = (TextView) view.findViewById(R.id.list_item_stock_price);
             changeAbsTextView = (TextView) view.findViewById(R.id.list_item_stock_change_absolute);
             changePercentTextView = (TextView) view.findViewById(R.id.list_item_stock_change_percent);
         }
+
+        public void bindModel(Stock stock) {
+
+            String symbol = stock.getSymbol();
+            symbolTextView.setText(symbol);
+
+            String exchange = stock.getStockExchange();
+            exchangeTextView.setText(exchange);
+
+            BigDecimal price = stock.getQuote().getPrice();
+            priceTextView.setText(price.toString());
+
+            BigDecimal changeAbs = stock.getQuote().getChange();
+            changeAbsTextView.setText(Utils.formatChanges(changeAbs, false));
+            if (Utils.isNonNegative(changeAbs)) {
+                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.primary));
+            } else {
+                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
+            }
+
+            BigDecimal changePercent = stock.getQuote().getChangeInPercent();
+            changePercentTextView.setText(Utils.formatChanges(changePercent, true));
+            if (Utils.isNonNegative(changePercent)) {
+                changePercentTextView.setTextColor(context.getResources().getColor(R.color.primary));
+            } else {
+                changePercentTextView.setTextColor(context.getResources().getColor(R.color.red));
+            }
+        }
     }
+
+
 }

@@ -113,7 +113,9 @@ public class NewsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Feed feed) {
-            setRecyclerView(feed);
+            if (feed != null) {
+                setRecyclerView(feed);
+            }
         }
     }
 
