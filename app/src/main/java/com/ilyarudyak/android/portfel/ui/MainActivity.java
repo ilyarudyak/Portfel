@@ -12,28 +12,30 @@ import com.ilyarudyak.android.portfel.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // set toolbar
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        setToolbar();
+        setViewPager();
+        setTabLayout();
+    }
 
-        // set view pager
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new ViewPagerAdapter(getFragmentManager()));
-
-        // set tab layout
-        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mTabLayout.addTab(mTabLayout.newTab().setText("Tab 1"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Tab 2"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Tab 3"));
-        mTabLayout.setupWithViewPager(viewPager);
+    // helper methods
+    private void setTabLayout() {
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(mViewPager);
+    }
+    private void setViewPager() {
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mViewPager.setAdapter(new ViewPagerAdapter(this, getFragmentManager()));
+    }
+    private void setToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override

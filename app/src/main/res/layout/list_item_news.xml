@@ -22,7 +22,6 @@
         android:id="@+id/list_item_news_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/long_text"
         android:layout_toEndOf="@id/list_item_news_image_view"
         />
 

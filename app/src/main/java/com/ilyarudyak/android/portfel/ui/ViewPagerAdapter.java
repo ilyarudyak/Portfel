@@ -16,17 +16,25 @@ package com.ilyarudyak.android.portfel.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
+
+import com.ilyarudyak.android.portfel.R;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    public static final int NUMBER_OF_FRAGMENTS = 3;
+
+    private Context mContext;
+
+    public ViewPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
+        mContext = context;
     }
 
     @Override
     public int getCount() {
-        return (3);
+        return (NUMBER_OF_FRAGMENTS);
     }
 
     @Override
@@ -48,11 +56,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Market";
+                return mContext.getResources().getString(R.string.tab_title_market);
             case 1:
-                return "News";
+                return mContext.getResources().getString(R.string.tab_title_news);
             case 2:
-                return "Portfolio";
+                return mContext.getResources().getString(R.string.tab_title_portfolio);
             default:
                 throw new IllegalArgumentException("illegal position");
         }
