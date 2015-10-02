@@ -4,7 +4,7 @@
     <color name="primary">#009688</color>       <!-- 500 -->
     <color name="primary_dark">#00796b</color>  <!-- 700 -->
     <color name="primary_light">#80cbc4</color> <!-- 200 -->
-    <color name="accent">#ff9100</color>        <!-- A400 Orange -->
+    <color name="accent">#1de9b6</color>        <!-- A400 Teal -->
 
     <!-- text colors -->
     <color name="primary_text">#212121</color>  <!-- Black 87% -->

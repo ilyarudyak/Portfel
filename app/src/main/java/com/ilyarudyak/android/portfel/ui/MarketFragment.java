@@ -18,20 +18,25 @@ import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.Utils;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +49,12 @@ public class MarketFragment extends Fragment {
     public static final String TAG = MarketFragment.class.getSimpleName();
     private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
 
-    private static final String[] SYMBOLS = {"GOOG", "AAPL", "YHOO", "IBM", "FB",
-            "INTC", "ORCL", "HPQ", "TSLA", "MSFT"};
+    private static List<String> SYMBOLS = new ArrayList<>(Arrays.asList("%5EGSPC", "GOOG", "AAPL", "YHOO", "IBM", "FB",
+            "INTC", "ORCL", "HPQ", "TSLA", "MSFT"));
 
     private RecyclerView mRecyclerView;
+    private ImageView mIndexChartImageView;
+    private FloatingActionButton mFAB;
 
     public static MarketFragment newInstance(int position) {
 
@@ -62,7 +69,8 @@ public class MarketFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        new FetchMarketData().execute(SYMBOLS);
+        String[] symbols = SYMBOLS.toArray(new String[SYMBOLS.size()]);
+        new FetchMarketData().execute(symbols);
     }
 
     @Override
@@ -71,6 +79,21 @@ public class MarketFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_market, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.market_recycler_view);
+        mIndexChartImageView = (ImageView) view.findViewById(R.id.market_index_chart_image_view);
+
+        Picasso.with(getActivity())
+                .load(Config.S_AND_P_URL.toString())
+                .into(mIndexChartImageView);
+
+        mFAB = (FloatingActionButton) view.findViewById(R.id.market_fab_add_stock);
+        mFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SYMBOLS.add("TWTR");
+                String[] symbols = SYMBOLS.toArray(new String[SYMBOLS.size()]);
+                new FetchMarketData().execute(symbols);
+            }
+        });
 
         return view;
     }
@@ -91,7 +114,7 @@ public class MarketFragment extends Fragment {
         mRecyclerView.setAdapter(marketDataAdapter);
     }
 
-    // ------------------- AsyncTask class -----------------
+    // ------------------- AsyncTask classes -----------------
 
     private class FetchMarketData extends AsyncTask<String, Void, List<Stock>> {
 
@@ -141,8 +164,8 @@ public class MarketFragment extends Fragment {
             String symbol = stock.getSymbol();
             holder.symbolTextView.setText(symbol);
 
-            String time = stock.getQuote().getLastTradeTimeStr();
-            holder.timeTextView.setText(time);
+            String exchange = stock.getStockExchange();
+            holder.exchangeTextView.setText(exchange);
 
             BigDecimal price = stock.getQuote().getPrice();
             holder.priceTextView.setText(price.toString());
@@ -172,7 +195,7 @@ public class MarketFragment extends Fragment {
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView symbolTextView;
-        public TextView timeTextView;
+        public TextView exchangeTextView;
         public TextView priceTextView;
         public TextView changeAbsTextView;
         public TextView changePercentTextView;
@@ -180,7 +203,7 @@ public class MarketFragment extends Fragment {
         public ViewHolder(View view) {
             super(view);
             symbolTextView = (TextView) view.findViewById(R.id.list_item_stock_symbol);
-            timeTextView = (TextView) view.findViewById(R.id.list_item_stock_time);
+            exchangeTextView = (TextView) view.findViewById(R.id.list_item_stock_exchange);
             priceTextView = (TextView) view.findViewById(R.id.list_item_stock_price);
             changeAbsTextView = (TextView) view.findViewById(R.id.list_item_stock_change_absolute);
             changePercentTextView = (TextView) view.findViewById(R.id.list_item_stock_change_percent);

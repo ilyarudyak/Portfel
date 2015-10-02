@@ -9,16 +9,20 @@ import java.net.URL;
 public class Config {
 
     public static final URL NEWS_URL;
+    public static final URL S_AND_P_URL;
 
     static {
-        URL url = null;
+        URL urlNews = null;
+        URL urlSP = null;
         try {
 //            url = new URL("http://www.forbes.com/markets/index.xml" );
-            url = new URL("http://rss.news.yahoo.com/rss/mostviewed");
+            urlNews = new URL("http://rss.news.yahoo.com/rss/mostviewed");
+            urlSP = new URL("http://chart.finance.yahoo.com/z?s=%5EGSPC&t=1m&q=l&l=off&z=m");
         } catch (MalformedURLException ignored) {
             // TODO: throw a real error
         }
 
-        NEWS_URL = url;
+        NEWS_URL = urlNews;
+        S_AND_P_URL = urlSP;
     }
 }

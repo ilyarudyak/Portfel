@@ -13,11 +13,9 @@ public class Utils {
 
     public static String formatChanges(BigDecimal change, boolean isPercent) {
 
-        String result;
+        String result = change.toString();
         if (isNonNegative(change)) {
-            result = "+" + change;
-        } else {
-            result = "-" + change;
+            result = "+" + result;
         }
 
         if (isPercent) {
