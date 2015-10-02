@@ -34,11 +34,25 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return NewsFragment.newInstance(position);
-            case 1:
                 return MarketFragment.newInstance(position);
+            case 1:
+                return NewsFragment.newInstance(position);
             case 2:
                 return PortfolioFragment.newInstance(position);
+            default:
+                throw new IllegalArgumentException("illegal position");
+        }
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Market";
+            case 1:
+                return "News";
+            case 2:
+                return "Portfolio";
             default:
                 throw new IllegalArgumentException("illegal position");
         }
