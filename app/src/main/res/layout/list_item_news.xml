@@ -11,11 +11,10 @@
 
     <ImageView
         android:id="@+id/list_item_news_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/placeholder"
-        android:adjustViewBounds="true"
-        android:paddingEnd="8dp"
+        android:layout_width="84dp"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:layout_marginEnd="8dp"
         />
 
     <TextView

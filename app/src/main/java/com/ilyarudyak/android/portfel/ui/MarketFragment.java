@@ -155,15 +155,15 @@ public class MarketFragment extends Fragment {
             switch (viewType) {
                 case R.id.view_holder_image:
                     view = getActivity().getLayoutInflater().inflate(
-                            R.layout.market_list_item_image, parent, false);
+                            R.layout.list_item_market_image, parent, false);
                     return new ImageViewHolder(getActivity(), view);
                 case R.id.view_holder_header:
                     view = getActivity().getLayoutInflater().inflate(
-                            R.layout.market_list_item_header, parent, false);
+                            R.layout.list_item_market_header, parent, false);
                     return new HeaderViewHolder(getActivity(), view);
                 default:
                     view = getActivity().getLayoutInflater().inflate(
-                            R.layout.market_list_item_stock, parent, false);
+                            R.layout.list_item_market_stock, parent, false);
                     return new StockViewHolder(getActivity(), view);
             }
         }

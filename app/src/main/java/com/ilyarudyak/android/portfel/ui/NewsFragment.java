@@ -33,6 +33,7 @@ import com.einmalfel.earl.Item;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
+import com.ilyarudyak.android.portfel.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -144,13 +145,15 @@ public class NewsFragment extends Fragment {
             String urlStr = item.getImageLink();
             if (urlStr != null) {
                 Picasso.with(getActivity())
-                        .load(item.getImageLink())
+                        .load(urlStr)
                         .into(holder.imageView);
+            } else {
+                holder.imageView.setVisibility(View.GONE);
             }
 
             Date date = item.getPublicationDate();
             if (date != null) {
-                holder.dateTextView.setText(date.toString());
+                holder.dateTextView.setText(Utils.getTimeAgo(date.getTime()));
             }
         }
 
