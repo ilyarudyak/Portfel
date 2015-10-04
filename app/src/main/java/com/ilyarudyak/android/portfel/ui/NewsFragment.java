@@ -15,6 +15,7 @@
 package com.ilyarudyak.android.portfel.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class NewsFragment extends Fragment {
 
     private TextView mTextView;
     private RecyclerView mRecyclerView;
+    private Feed mFeed;
 
     public static NewsFragment newInstance(int position) {
 
@@ -88,33 +90,32 @@ public class NewsFragment extends Fragment {
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
 
         // set adapter
-        NewsFeedAdapter articleAdapter = new NewsFeedAdapter(feed);
+        NewsFeedAdapter articleAdapter = new NewsFeedAdapter();
         mRecyclerView.setAdapter(articleAdapter);
     }
 
     // ------------------- AsyncTask class -----------------
 
-    private class FetchNewsFeed extends AsyncTask<URL, Void, Feed> {
+    private class FetchNewsFeed extends AsyncTask<URL, Void, Void> {
 
         @Override
-        protected Feed doInBackground(URL... urls) {
+        protected Void doInBackground(URL... urls) {
 
             InputStream inputStream;
-            Feed feed = null;
             try {
                 inputStream = urls[0].openConnection().getInputStream();
-                feed = EarlParser.parseOrThrow(inputStream, 0);
+                mFeed = EarlParser.parseOrThrow(inputStream, 0);
             } catch (IOException | DataFormatException | XmlPullParserException e) {
                 e.printStackTrace();
             }
 
-            return feed;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Feed feed) {
-            if (feed != null) {
-                setRecyclerView(feed);
+        protected void onPostExecute(Void ignore) {
+            if (mFeed != null) {
+                setRecyclerView(mFeed);
             }
         }
     }
@@ -122,12 +123,6 @@ public class NewsFragment extends Fragment {
     // ------------------- RecyclerView classes -----------------
 
     private class NewsFeedAdapter extends RecyclerView.Adapter<ViewHolder> {
-
-        private Feed mFeed;
-
-        public NewsFeedAdapter(Feed feed) {
-            mFeed = feed;
-        }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -164,17 +159,29 @@ public class NewsFragment extends Fragment {
             return mFeed.getItems().size();
         }
     }
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
 
         public ImageView imageView;
         public TextView titleTextView;
         public TextView dateTextView;
 
-        public ViewHolder(View view) {
-            super(view);
-            imageView = (ImageView) view.findViewById(R.id.list_item_news_image_view);
-            titleTextView = (TextView) view.findViewById(R.id.list_item_news_title);
-            dateTextView = (TextView) view.findViewById(R.id.list_item_news_date);
+        public ViewHolder(View itemView) {
+            super(itemView);
+            imageView = (ImageView) itemView.findViewById(R.id.list_item_news_image_view);
+            titleTextView = (TextView) itemView.findViewById(R.id.list_item_news_title);
+            dateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View itemView) {
+            Item rssItem = mFeed.getItems().get(getAdapterPosition());
+            String itemUrlStr = rssItem.getLink();
+            Intent detailIntent = new Intent(getActivity(), NewsDetailActivity.class);
+            detailIntent.putExtra(NewsDetailActivity.EXTRA_RSS_ITEM_URL_STRING, itemUrlStr);
+            startActivity(detailIntent);
         }
     }
 }
