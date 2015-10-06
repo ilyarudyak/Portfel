@@ -33,7 +33,7 @@ import com.einmalfel.earl.Item;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
-import com.ilyarudyak.android.portfel.utils.Utils;
+import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.squareup.picasso.Picasso;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -153,7 +153,7 @@ public class NewsFragment extends Fragment {
 
             Date date = item.getPublicationDate();
             if (date != null) {
-                holder.dateTextView.setText(Utils.getTimeAgo(date.getTime()));
+                holder.dateTextView.setText(MiscUtils.getTimeAgo(date.getTime()));
             }
         }
 

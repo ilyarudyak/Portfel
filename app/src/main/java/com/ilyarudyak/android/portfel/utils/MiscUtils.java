@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Created by ilyarudyak on 10/1/15.
  */
-public class Utils {
+public class MiscUtils {
 
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;

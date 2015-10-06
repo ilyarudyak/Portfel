@@ -11,7 +11,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.ilyarudyak.android.portfel.R;
-import com.ilyarudyak.android.portfel.utils.Utils;
+import com.ilyarudyak.android.portfel.utils.MiscUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class StockDetailActivity extends AppCompatActivity {
         // set x axis values
         ArrayList<String> xVals = new ArrayList<>();
         for (int i = 0; i < history.size(); i++) {
-            xVals.add(Utils.formatMonthOnly(history.get(i).getDate().getTime()));
+            xVals.add(MiscUtils.formatMonthOnly(history.get(i).getDate().getTime()));
         }
 
         // set y axis values

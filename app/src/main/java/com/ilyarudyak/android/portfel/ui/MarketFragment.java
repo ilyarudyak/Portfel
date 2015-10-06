@@ -32,7 +32,7 @@ import android.widget.TextView;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
-import com.ilyarudyak.android.portfel.utils.Utils;
+import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -283,16 +283,16 @@ public class MarketFragment extends Fragment {
             priceTextView.setText(price.toString());
 
             BigDecimal changeAbs = stock.getQuote().getChange();
-            changeAbsTextView.setText(Utils.formatChanges(changeAbs, false));
-            if (Utils.isNonNegative(changeAbs)) {
+            changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));
+            if (MiscUtils.isNonNegative(changeAbs)) {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.primary));
             } else {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
             }
 
             BigDecimal changePercent = stock.getQuote().getChangeInPercent();
-            changePercentTextView.setText(Utils.formatChanges(changePercent, true));
-            if (Utils.isNonNegative(changePercent)) {
+            changePercentTextView.setText(MiscUtils.formatChanges(changePercent, true));
+            if (MiscUtils.isNonNegative(changePercent)) {
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.primary));
             } else {
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.red));
