@@ -16,6 +16,7 @@ package com.ilyarudyak.android.portfel.ui;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -247,7 +248,8 @@ public class MarketFragment extends Fragment {
             }
         }
     }
-    public static class StockViewHolder extends RecyclerView.ViewHolder {
+    public class StockViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         private Context context;
 
@@ -257,14 +259,16 @@ public class MarketFragment extends Fragment {
         public TextView changeAbsTextView;
         public TextView changePercentTextView;
 
-        public StockViewHolder(Context context, View view) {
-            super(view);
+        public StockViewHolder(Context context, View itemView) {
+            super(itemView);
             this.context = context;
-            symbolTextView = (TextView) view.findViewById(R.id.list_item_stock_symbol);
-            exchangeTextView = (TextView) view.findViewById(R.id.list_item_stock_exchange);
-            priceTextView = (TextView) view.findViewById(R.id.list_item_stock_price);
-            changeAbsTextView = (TextView) view.findViewById(R.id.list_item_stock_change_absolute);
-            changePercentTextView = (TextView) view.findViewById(R.id.list_item_stock_change_percent);
+            symbolTextView = (TextView) itemView.findViewById(R.id.list_item_stock_symbol);
+            exchangeTextView = (TextView) itemView.findViewById(R.id.list_item_stock_exchange);
+            priceTextView = (TextView) itemView.findViewById(R.id.list_item_stock_price);
+            changeAbsTextView = (TextView) itemView.findViewById(R.id.list_item_stock_change_absolute);
+            changePercentTextView = (TextView) itemView.findViewById(R.id.list_item_stock_change_percent);
+
+            itemView.setOnClickListener(this);
         }
 
         public void bindModel(Stock stock) {
@@ -293,6 +297,15 @@ public class MarketFragment extends Fragment {
             } else {
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.red));
             }
+        }
+
+        @Override
+        public void onClick(View itemView) {
+//            Item rssItem = mFeed.getItems().get(getAdapterPosition());
+//            String itemUrlStr = rssItem.getLink();
+            Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
+//            detailIntent.putExtra(NewsDetailActivity.EXTRA_RSS_ITEM_URL_STRING, itemUrlStr);
+            startActivity(detailIntent);
         }
     }
 

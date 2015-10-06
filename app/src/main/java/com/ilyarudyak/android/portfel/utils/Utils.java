@@ -1,7 +1,9 @@
 package com.ilyarudyak.android.portfel.utils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by ilyarudyak on 10/1/15.
@@ -12,6 +14,8 @@ public class Utils {
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
+
+    private static final String PATTERN_MONTH_ONLY = "MMM";
 
     /** format changes in stocks and indices:
      *  add + to positive changes and
@@ -67,4 +71,11 @@ public class Utils {
         }
     }
 
+    /** format date for a chart on stock detail page - just month*/
+    public static String formatMonthOnly(Date date) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_MONTH_ONLY);
+        return sdf.format(date);
+
+    }
 }

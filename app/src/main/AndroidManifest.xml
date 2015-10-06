@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".ui.NewsDetailActivity" >
         </activity>
+        <activity android:name=".ui.StockDetailActivity" >
+        </activity>
     </application>
 
 </manifest>
