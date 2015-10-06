@@ -26,7 +26,7 @@ public class PortfolioContract {
         public static final String SYMBOL = "symbol";
         public static final String NAME = "name";
         public static final String CURRENCY = "currency";
-        public static final String EXCHANGE = "exchange";
+        public static final String STOCK_EXCHANGE = "exchange";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI
                 .buildUpon()
