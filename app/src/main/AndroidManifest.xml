@@ -27,6 +27,8 @@
             android:name=".data.PortfolioProvider"
             android:authorities="com.ilyarudyak.android.portfel" />
 
+        <service android:name=".data.MarketUpdateService"/>
+
     </application>
 
 </manifest>

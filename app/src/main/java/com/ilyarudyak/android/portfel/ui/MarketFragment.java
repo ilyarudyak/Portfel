@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
+import com.ilyarudyak.android.portfel.data.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.squareup.picasso.Picasso;
@@ -78,6 +80,10 @@ public class MarketFragment extends Fragment {
         super.onStart();
         String[] symbols = SYMBOLS.toArray(new String[SYMBOLS.size()]);
         new FetchMarketData().execute(symbols);
+
+        Log.d(TAG, "i'm going to start service...");
+        Intent intent = new Intent(getActivity(), MarketUpdateService.class);
+        getActivity().startService(intent);
     }
 
     @Override
