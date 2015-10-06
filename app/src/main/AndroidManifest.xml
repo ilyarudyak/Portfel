@@ -22,6 +22,11 @@
         </activity>
         <activity android:name=".ui.StockDetailActivity" >
         </activity>
+
+        <provider
+            android:name=".data.PortfolioProvider"
+            android:authorities="com.ilyarudyak.android.portfel" />
+
     </application>
 
 </manifest>
