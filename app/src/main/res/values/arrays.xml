@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="index_symbols_default">
+        <item>@string/index_symbol_sp500</item>
+        <item>@string/index_symbol_nasdaq</item>
+        <item>@string/index_symbol_nyse_amex</item>
+    </string-array>
+
+    <string-array name="stock_symbols_default">
+        <item>@string/stock_symbol_google</item>
+        <item>@string/stock_symbol_apple</item>
+        <item>@string/stock_symbol_yahoo</item>
+        <item>@string/stock_symbol_ibm</item>
+        <item>@string/stock_symbol_facebook</item>
+        <item>@string/stock_symbol_tesla</item>
+        <item>@string/stock_symbol_oracle</item>
+        <item>@string/stock_symbol_hp</item>
+        <item>@string/stock_symbol_microsoft</item>
+        <item>@string/stock_symbol_intel</item>
+    </string-array>
+
+</resources>

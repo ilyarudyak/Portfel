@@ -15,6 +15,24 @@
     <string name="market_header_indices">Indices</string>
     <string name="market_header_stocks">Stocks</string>
 
+    <!-- default stock and index symbols-->
+    <!-- default index symbols-->
+    <string name="index_symbol_sp500">^GSPC</string>
+    <string name="index_symbol_nasdaq">^IXIC</string>
+    <string name="index_symbol_nyse_amex">^XAX</string>
+    <!-- default stock symbols-->
+    <string name="stock_symbol_google">GOOG</string>
+    <string name="stock_symbol_apple">AAPL</string>
+    <string name="stock_symbol_yahoo">YHOO</string>
+    <string name="stock_symbol_ibm">IBM</string>
+    <string name="stock_symbol_facebook">FB</string>
+    <string name="stock_symbol_tesla">TSLA</string>
+    <string name="stock_symbol_oracle">ORCL</string>
+    <string name="stock_symbol_hp">HPQ</string>
+    <string name="stock_symbol_microsoft">MSFT</string>
+    <string name="stock_symbol_intel">INTC</string>
+
+
     <!-- misc strings -->
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

@@ -35,12 +35,12 @@ import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
+import com.ilyarudyak.android.portfel.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +53,21 @@ public class MarketFragment extends Fragment {
     public static final String TAG = MarketFragment.class.getSimpleName();
     private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
 
+    private static String[] mIndexSymbols;
+    private static String[] mStockSymbols;
+
     private static final int POSITION_IMAGE = 0;
     private static final int POSITION_HEADER_INDICES = 1;
-    private static final int POSITION_HEADER_STOCKS = 5;
-    private static final int ADDITIONAL_POSITIONS_BEFORE_STOCKS_HEADER = 2;
+    // image and indices header before
+    private static final int INDEX_POSITION_OFFSET = 2;
+    // 1 position - image, 2 position - headers
     private static final int ADDITIONAL_POSITIONS = 3;
 
-    private static List<String> SYMBOLS = new ArrayList<>(Arrays.asList("GOOG", "AAPL", "YHOO", "IBM", "FB",
-            "INTC", "ORCL", "HPQ", "TSLA", "MSFT"));
+    // this is not const - it depends on mIndexSymbols length
+    private static int mPositionHeaderStock;
+
+
+
 
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFAB;
@@ -78,8 +85,12 @@ public class MarketFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        String[] symbols = SYMBOLS.toArray(new String[SYMBOLS.size()]);
-        new FetchMarketData().execute(symbols);
+
+        mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.INDICES));
+        mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
+        mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
+
+        new FetchMarketData().execute(concat(mIndexSymbols, mStockSymbols));
 
         Log.d(TAG, "i'm going to start service...");
         Intent intent = new Intent(getActivity(), MarketUpdateService.class);
@@ -97,9 +108,9 @@ public class MarketFragment extends Fragment {
         mFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SYMBOLS.add("TWTR");
-                String[] symbols = SYMBOLS.toArray(new String[SYMBOLS.size()]);
-                new FetchMarketData().execute(symbols);
+//                mStockSymbols.add("TWTR");
+//                String[] symbols = mStockSymbols.toArray(new String[mStockSymbols.size()]);
+//                new FetchMarketData().execute(symbols);
             }
         });
 
@@ -121,6 +132,14 @@ public class MarketFragment extends Fragment {
         MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
         mRecyclerView.setAdapter(marketDataAdapter);
     }
+    private String[] concat(String[] a, String[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+        String[] c= new String[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
+    }
 
     // ------------------- AsyncTask classes -----------------
 
@@ -129,19 +148,33 @@ public class MarketFragment extends Fragment {
         @Override
         protected List<Stock> doInBackground(String ...symbols) {
 
-            Map<String, Stock> stocks = new HashMap<>();
+            Map<String, Stock> indicesAndStocks = new HashMap<>();
             try {
-                stocks = YahooFinance.get(symbols);
+                indicesAndStocks = YahooFinance.get(symbols);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return new ArrayList<>(stocks.values());
+            return getList(indicesAndStocks);
         }
 
         @Override
-        protected void onPostExecute(List<Stock> stocks) {
-            setRecyclerView(stocks);
+        protected void onPostExecute(List<Stock> indicesAndStocks) {
+            setRecyclerView(indicesAndStocks);
+        }
+
+        private List<Stock> getList(Map<String, Stock> indicesAndStocks) {
+            List<Stock> list = new ArrayList<>();
+
+            for (String symbol: mIndexSymbols) {
+                list.add(indicesAndStocks.get(symbol));
+            }
+
+            for (String symbol: mStockSymbols) {
+                list.add(indicesAndStocks.get(symbol));
+            }
+
+            return list;
         }
     }
 
@@ -149,10 +182,10 @@ public class MarketFragment extends Fragment {
 
     private class MarketDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private List<Stock> mStocks;
+        private List<Stock> mIndicesAndStocks;
 
-        public MarketDataAdapter(List<Stock> stocks) {
-            mStocks = stocks;
+        public MarketDataAdapter(List<Stock> indicesAndStocks) {
+            mIndicesAndStocks = indicesAndStocks;
         }
 
         @Override
@@ -181,33 +214,35 @@ public class MarketFragment extends Fragment {
             Stock stock;
             if (position == POSITION_IMAGE) {
                 ((ImageViewHolder) holder).bindModel();
-            } else if (position == POSITION_HEADER_INDICES || position == POSITION_HEADER_STOCKS) {
+            } else if (position == POSITION_HEADER_INDICES) {
                 ((HeaderViewHolder) holder).bindModel(position);
-            } else if (POSITION_HEADER_INDICES < position && position < POSITION_HEADER_STOCKS) {
-                stock = mStocks.get(position - ADDITIONAL_POSITIONS_BEFORE_STOCKS_HEADER);
+            } else if (POSITION_HEADER_INDICES < position && position < mPositionHeaderStock) {
+                stock = mIndicesAndStocks.get(position - INDEX_POSITION_OFFSET);
                 ((StockViewHolder) holder).bindModel(stock);
+            } else if (position == mPositionHeaderStock) {
+                ((HeaderViewHolder) holder).bindModel(position);
             } else {
-                stock = mStocks.get(position - ADDITIONAL_POSITIONS);
+                stock = mIndicesAndStocks.get(position - ADDITIONAL_POSITIONS);
                 ((StockViewHolder) holder).bindModel(stock);
             }
         }
 
         @Override
         public int getItemCount() {
-            return mStocks.size() + ADDITIONAL_POSITIONS;
+            return mIndicesAndStocks.size() + ADDITIONAL_POSITIONS;
         }
 
         @Override
         public int getItemViewType(int position) {
-            switch (position) {
-                case POSITION_IMAGE:
-                    return R.id.view_holder_image;
-                case POSITION_HEADER_INDICES:
-                    return R.id.view_holder_header;
-                case POSITION_HEADER_STOCKS:
-                    return R.id.view_holder_header;
-                default:
-                    return R.id.view_holder_stock;
+
+            if(position == POSITION_IMAGE) {
+                return R.id.view_holder_image;
+            } else if (position == POSITION_HEADER_INDICES) {
+                return R.id.view_holder_header;
+            } else if (position == mPositionHeaderStock) {
+                return R.id.view_holder_header;
+            } else {
+                return R.id.view_holder_stock;
             }
         }
     }
@@ -244,13 +279,10 @@ public class MarketFragment extends Fragment {
 
         public void bindModel(int headerPosition) {
 
-            switch (headerPosition) {
-                case POSITION_HEADER_INDICES:
-                    headerTextView.setText(context.getResources().getString(R.string.market_header_indices));
-                    break;
-                case POSITION_HEADER_STOCKS:
-                    headerTextView.setText(context.getResources().getString(R.string.market_header_stocks));
-                    break;
+            if (headerPosition == POSITION_HEADER_INDICES) {
+                headerTextView.setText(context.getResources().getString(R.string.market_header_indices));
+            } else if (headerPosition == mPositionHeaderStock) {
+                headerTextView.setText(context.getResources().getString(R.string.market_header_stocks));
             }
         }
     }
@@ -307,10 +339,7 @@ public class MarketFragment extends Fragment {
 
         @Override
         public void onClick(View itemView) {
-//            Item rssItem = mFeed.getItems().get(getAdapterPosition());
-//            String itemUrlStr = rssItem.getLink();
             Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
-//            detailIntent.putExtra(NewsDetailActivity.EXTRA_RSS_ITEM_URL_STRING, itemUrlStr);
             startActivity(detailIntent);
         }
     }
