@@ -66,9 +66,6 @@ public class MarketFragment extends Fragment {
     // this is not const - it depends on mIndexSymbols length
     private static int mPositionHeaderStock;
 
-
-
-
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFAB;
 

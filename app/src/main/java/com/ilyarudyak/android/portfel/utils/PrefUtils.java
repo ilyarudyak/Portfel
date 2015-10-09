@@ -38,7 +38,7 @@ public class PrefUtils {
         return c.getSharedPreferences(PREFS_NAME, 0)
                 .getStringSet(symbolType, new HashSet<>(Arrays.asList(defaultSymbols)));
     }
-    public static void putSymbols(Context c, String symbolType, String symbol) {
+    public static void putSymbol(Context c, String symbolType, String symbol) {
 
         Set<String> symbols = getSymbols(c, symbolType);
         if (symbols == null) {
