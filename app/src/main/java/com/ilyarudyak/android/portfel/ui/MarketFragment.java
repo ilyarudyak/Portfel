@@ -15,8 +15,12 @@
 package com.ilyarudyak.android.portfel.ui;
 
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,7 +37,9 @@ import android.widget.TextView;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.MarketUpdateService;
+import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
+import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
@@ -48,7 +54,8 @@ import java.util.Map;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
-public class MarketFragment extends Fragment {
+public class MarketFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = MarketFragment.class.getSimpleName();
     private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
@@ -80,16 +87,15 @@ public class MarketFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.INDICES));
         mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
-        new FetchMarketData().execute(concat(mIndexSymbols, mStockSymbols));
+//        new FetchMarketData().execute(concat(mIndexSymbols, mStockSymbols));
 
-        Log.d(TAG, "i'm going to start service...");
         Intent intent = new Intent(getActivity(), MarketUpdateService.class);
         getActivity().startService(intent);
     }
@@ -111,23 +117,33 @@ public class MarketFragment extends Fragment {
             }
         });
 
+
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getLoaderManager().initLoader(0, null, this);
     }
 
     // helper methods
     private void setRecyclerView(List<Stock> stocks) {
 
-        // set layout manager
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(llm);
+        if (stocks != null && stocks.size() > 0) {
+            // set layout manager
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(llm);
 
-        // set divider
-        Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
-        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+            // set divider
+            Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
+            mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
 
-        // set adapter
-        MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
-        mRecyclerView.setAdapter(marketDataAdapter);
+            // set adapter
+            MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
+            mRecyclerView.setAdapter(marketDataAdapter);
+        }
     }
     private String[] concat(String[] a, String[] b) {
         int aLen = a.length;
@@ -314,10 +330,10 @@ public class MarketFragment extends Fragment {
             String exchange = stock.getStockExchange();
             exchangeTextView.setText(exchange);
 
-            BigDecimal price = stock.getQuote().getPrice();
+            BigDecimal price = new BigDecimal("0");//stock.getQuote().getPrice();
             priceTextView.setText(price.toString());
 
-            BigDecimal changeAbs = stock.getQuote().getChange();
+            BigDecimal changeAbs = new BigDecimal("0");//stock.getQuote().getChange();
             changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));
             if (MiscUtils.isNonNegative(changeAbs)) {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.primary));
@@ -325,7 +341,7 @@ public class MarketFragment extends Fragment {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
             }
 
-            BigDecimal changePercent = stock.getQuote().getChangeInPercent();
+            BigDecimal changePercent = new BigDecimal("0");//stock.getQuote().getChangeInPercent();
             changePercentTextView.setText(MiscUtils.formatChanges(changePercent, true));
             if (MiscUtils.isNonNegative(changePercent)) {
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.primary));
@@ -341,5 +357,27 @@ public class MarketFragment extends Fragment {
         }
     }
 
+    // ------------------ loader methods ------------------
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity(),
+                PortfolioContract.StockTable.CONTENT_URI,
+                null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "i'm done");
+        if (cursor != null) {
+            setRecyclerView(DataUtils.buildStockList(cursor));
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mRecyclerView.setAdapter(null);
+    }
 
 }

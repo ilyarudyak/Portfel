@@ -5,6 +5,9 @@ import android.database.Cursor;
 
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import yahoofinance.Stock;
 
 /**
@@ -25,13 +28,13 @@ public class DataUtils {
         return cv;
     }
 
-    public static Stock buildStock(Cursor c) {
+    public static List<Stock> buildStockList(Cursor c) {
 
-        Stock stock = null;
+        List<Stock> stockList = new ArrayList<>();
         if (c.moveToFirst()) {
             do {
                 String symbol = c.getString(c.getColumnIndex(PortfolioContract.StockTable.SYMBOL));
-                stock = new Stock(symbol);
+                Stock stock = new Stock(symbol);
                 stock.setName(c.getString(c.getColumnIndex(PortfolioContract.StockTable.NAME)));
                 stock.setCurrency(c.getString(c.getColumnIndex(PortfolioContract.StockTable.CURRENCY)));
                 stock.setStockExchange(c.getString(c.getColumnIndex(PortfolioContract.StockTable.STOCK_EXCHANGE)));
@@ -39,10 +42,11 @@ public class DataUtils {
 //                StockQuote quote = new StockQuote(symbol);
 //                quote.setPrice(new BigDecimal(c.getString(c.getColumnIndex(PortfolioContract.StockQuoteTable.PRICE))));
 //                stock.setQuote(quote);
+                stockList.add(stock);
             } while (c.moveToNext());
         }
 
 //        c.close();
-        return stock;
+        return stockList;
     }
 }
