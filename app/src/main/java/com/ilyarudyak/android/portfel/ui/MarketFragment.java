@@ -336,7 +336,7 @@ public class MarketFragment extends Fragment implements
             BigDecimal changeAbs = new BigDecimal("0");//stock.getQuote().getChange();
             changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));
             if (MiscUtils.isNonNegative(changeAbs)) {
-                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.primary));
+                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
             } else {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
             }
@@ -344,7 +344,7 @@ public class MarketFragment extends Fragment implements
             BigDecimal changePercent = new BigDecimal("0");//stock.getQuote().getChangeInPercent();
             changePercentTextView.setText(MiscUtils.formatChanges(changePercent, true));
             if (MiscUtils.isNonNegative(changePercent)) {
-                changePercentTextView.setTextColor(context.getResources().getColor(R.color.primary));
+                changePercentTextView.setTextColor(context.getResources().getColor(R.color.accent));
             } else {
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.red));
             }

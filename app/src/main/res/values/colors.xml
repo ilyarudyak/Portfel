@@ -3,8 +3,8 @@
     <!-- we use the "Blue Grey" Material Palette -->
     <color name="primary">#607d8b</color>       <!-- 500 -->
     <color name="primary_dark">#455a64</color>  <!-- 700 -->
-    <color name="primary_light">#b0bec5</color> <!-- 200 -->
-    <color name="accent">#1de9b6</color>        <!-- Teal A400 -->
+    <color name="primary_light">#eceff1</color> <!-- 50 -->
+    <color name="accent">#00bfa5</color>        <!-- Teal A700 -->
 
     <!-- text colors -->
     <color name="primary_text">#212121</color>  <!-- Black 87% -->
