@@ -8,8 +8,8 @@ import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +28,25 @@ public class PortfolioProvider extends ContentProvider {
     private static final int STOCK_ID = 101;
     private static final int STOCK_QUOTE = 200;
     private static final int STOCK_QUOTE_ID = 201;
+
+    private static final SQLiteQueryBuilder sStockQuotesBuilder;
+
+    static {
+        sStockQuotesBuilder = new SQLiteQueryBuilder();
+
+        sStockQuotesBuilder.setTables(
+                PortfolioContract.StockTable.TABLE_NAME + " INNER JOIN " +
+                        PortfolioContract.StockQuoteTable.TABLE_NAME +
+                        " ON " + PortfolioContract.StockTable.TABLE_NAME +
+                        "." + PortfolioContract.StockTable._ID +
+                        " = " + PortfolioContract.StockQuoteTable.TABLE_NAME +
+                        "." + PortfolioContract.StockQuoteTable.STOCK_ID);
+    }
+
+    private Cursor getStockAndQuote() {
+        return sStockQuotesBuilder.query(mPortfolioDbHelper.getReadableDatabase(),
+                null, null, null, null, null, null);
+    }
 
     private PortfolioDbHelper mPortfolioDbHelper;
 
@@ -60,8 +79,9 @@ public class PortfolioProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch(match) {
             case STOCK:
-                c = db.query(PortfolioContract.StockTable.TABLE_NAME, projection, selection,
-                        selectionArgs, null, null, sortOrder);
+                c = getStockAndQuote();
+                /*c = db.query(PortfolioContract.StockTable.TABLE_NAME, projection, selection,
+                        selectionArgs, null, null, sortOrder);*/
                 break;
             case STOCK_ID:
                 String stockId = PortfolioContract.StockTable.getStockId(uri);
@@ -110,11 +130,11 @@ public class PortfolioProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch(match) {
             case STOCK:
-                long movieId = db.insertOrThrow(PortfolioContract.StockTable.TABLE_NAME, null, values);
-                return PortfolioContract.StockTable.buildStockUri(movieId);
+                long stockId = db.insertOrThrow(PortfolioContract.StockTable.TABLE_NAME, null, values);
+                return PortfolioContract.StockTable.buildStockUri(stockId);
             case STOCK_QUOTE:
-                long trailerId = db.insertOrThrow(PortfolioContract.StockQuoteTable.TABLE_NAME, null, values);
-                return PortfolioContract.StockQuoteTable.buildStockQuoteUri(trailerId);
+                long quoteId = db.insertOrThrow(PortfolioContract.StockQuoteTable.TABLE_NAME, null, values);
+                return PortfolioContract.StockQuoteTable.buildStockQuoteUri(quoteId);
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }

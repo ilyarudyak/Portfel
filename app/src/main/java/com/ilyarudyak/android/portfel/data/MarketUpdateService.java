@@ -4,9 +4,7 @@ import android.app.IntentService;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.ilyarudyak.android.portfel.utils.DataUtils;
@@ -37,9 +35,12 @@ public class MarketUpdateService extends IntentService {
         Log.d(TAG, "starting service...");
         ArrayList<ContentProviderOperation> cpo = new ArrayList<>();
 
+        Uri dirStockUri = PortfolioContract.StockTable.CONTENT_URI;
+        Uri dirStockQuoteUri = PortfolioContract.StockQuoteTable.CONTENT_URI;
+
         // delete stocks from db before fetching
-        Uri dirUri = PortfolioContract.StockTable.CONTENT_URI;
-        cpo.add(ContentProviderOperation.newDelete(dirUri).build());
+        getContentResolver().delete(dirStockUri, null, null);
+        getContentResolver().delete(dirStockQuoteUri, null, null);
 
         // get stocks from shared prefs
         String[] stockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.STOCKS));
@@ -55,14 +56,13 @@ public class MarketUpdateService extends IntentService {
         // insert this stocks into db
         if (stocks != null) {
             for (Stock stock: stocks.values()) {
-                ContentValues values = DataUtils.buildContentValues(stock);
-                cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+                ContentValues valuesStock = DataUtils.buildContentValuesStock(stock);
+                Uri uri = getContentResolver().insert(dirStockUri, valuesStock);
+                String id = PortfolioContract.StockTable.getStockId(uri);
+                ContentValues valuesStockQuotes = DataUtils.buildContentValuesStockQuote(stock, Integer.parseInt(id));
+                getContentResolver().insert(dirStockQuoteUri, valuesStockQuotes);
             }
-            try {
-                getContentResolver().applyBatch(PortfolioContract.CONTENT_AUTHORITY, cpo);
-            } catch (RemoteException | OperationApplicationException e) {
-                e.printStackTrace();
-            }
+
             Log.d(TAG, "inserting data into db...");
         }
     }

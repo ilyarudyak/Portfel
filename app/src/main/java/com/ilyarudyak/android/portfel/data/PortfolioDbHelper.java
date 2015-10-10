@@ -28,9 +28,10 @@ public class PortfolioDbHelper extends SQLiteOpenHelper {
                 " );";
 
         final String SQL_CREATE_STOCK_QUOTE_TABLE = "CREATE TABLE " + PortfolioContract.StockQuoteTable.TABLE_NAME + " (" +
-                PortfolioContract.StockQuoteTable._ID +         " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                PortfolioContract.StockQuoteTable.STOCK_ID +    " INTEGER NOT NULL, " +
-                PortfolioContract.StockQuoteTable.PRICE +       " TEXT NOT NULL " +
+                PortfolioContract.StockQuoteTable._ID +             " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PortfolioContract.StockQuoteTable.STOCK_ID +        " INTEGER NOT NULL, " +
+                PortfolioContract.StockQuoteTable.PRICE +           " TEXT NOT NULL, " +
+                PortfolioContract.StockQuoteTable.PREVIOUS_CLOSE +  " TEXT NOT NULL " +
                 " );";
 
         db.execSQL(SQL_CREATE_STOCK_TABLE);

@@ -53,6 +53,7 @@ public class PortfolioContract {
 
         public static final String STOCK_ID = "stock_id";
         public static final String PRICE = "price";
+        public static final String PREVIOUS_CLOSE = "previous_close";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI
                 .buildUpon()
