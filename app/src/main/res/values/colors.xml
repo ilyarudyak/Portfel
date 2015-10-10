@@ -3,6 +3,7 @@
     <!-- we use the "Blue Grey" Material Palette -->
     <color name="primary">#607d8b</color>       <!-- 500 -->
     <color name="primary_dark">#455a64</color>  <!-- 700 -->
+    <color name="semi_light">#90a4ae</color> <!-- 300 -->
     <color name="primary_light">#eceff1</color> <!-- 50 -->
     <color name="accent">#00bfa5</color>        <!-- Teal A700 -->
 

@@ -57,6 +57,7 @@
         android:text="16500.50"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@color/secondary_text"
+        android:paddingEnd="16dp"
         />
 
     <TextView
@@ -86,6 +87,7 @@
         android:text="+0.05%"
         android:textColor="@color/accent"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+
         />
 
 </android.support.v7.widget.GridLayout>
