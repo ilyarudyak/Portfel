@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setViewPager();
         setTabLayout();
 
+        MarketUpdateService.setServiceAlarm(this);
     }
 
     // helper methods

@@ -1,21 +1,16 @@
 package com.ilyarudyak.android.portfel.data;
 
 import android.content.ContentProvider;
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.ContentValues;
-import android.content.OperationApplicationException;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
-import java.util.ArrayList;
 
 /**
  * Created by ilyarudyak on 9/24/15.
@@ -26,27 +21,6 @@ public class PortfolioProvider extends ContentProvider {
 
     private static final int STOCK = 100;
     private static final int STOCK_ID = 101;
-    private static final int STOCK_QUOTE = 200;
-    private static final int STOCK_QUOTE_ID = 201;
-
-    private static final SQLiteQueryBuilder sStockQuotesBuilder;
-
-    static {
-        sStockQuotesBuilder = new SQLiteQueryBuilder();
-
-        sStockQuotesBuilder.setTables(
-                PortfolioContract.StockTable.TABLE_NAME + " INNER JOIN " +
-                        PortfolioContract.StockQuoteTable.TABLE_NAME +
-                        " ON " + PortfolioContract.StockTable.TABLE_NAME +
-                        "." + PortfolioContract.StockTable._ID +
-                        " = " + PortfolioContract.StockQuoteTable.TABLE_NAME +
-                        "." + PortfolioContract.StockQuoteTable.STOCK_ID);
-    }
-
-    private Cursor getStockAndQuote() {
-        return sStockQuotesBuilder.query(mPortfolioDbHelper.getReadableDatabase(),
-                null, null, null, null, null, null);
-    }
 
     private PortfolioDbHelper mPortfolioDbHelper;
 
@@ -57,10 +31,7 @@ public class PortfolioProvider extends ContentProvider {
         final String authority = PortfolioContract.CONTENT_AUTHORITY;
 
         matcher.addURI(authority, PortfolioContract.PATH_STOCK, STOCK);
-        matcher.addURI(authority, PortfolioContract.PATH_STOCK_QUOTE, STOCK_QUOTE);
-
         matcher.addURI(authority, PortfolioContract.PATH_STOCK + "/*", STOCK_ID);
-        matcher.addURI(authority, PortfolioContract.PATH_STOCK_QUOTE + "/*", STOCK_QUOTE_ID);
 
         return matcher;
     }
@@ -79,9 +50,8 @@ public class PortfolioProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch(match) {
             case STOCK:
-                c = getStockAndQuote();
-                /*c = db.query(PortfolioContract.StockTable.TABLE_NAME, projection, selection,
-                        selectionArgs, null, null, sortOrder);*/
+                c = db.query(PortfolioContract.StockTable.TABLE_NAME, projection, selection,
+                        selectionArgs, null, null, sortOrder);
                 break;
             case STOCK_ID:
                 String stockId = PortfolioContract.StockTable.getStockId(uri);
@@ -89,18 +59,12 @@ public class PortfolioProvider extends ContentProvider {
                         BaseColumns._ID + "=" + stockId,
                         selectionArgs, null, null, sortOrder);
                 break;
-            case STOCK_QUOTE:
-                c = db.query(PortfolioContract.StockQuoteTable.TABLE_NAME, projection, selection,
-                        selectionArgs, null, null, sortOrder);
-                break;
-            case STOCK_QUOTE_ID:
-                String stockQuoteId = PortfolioContract.StockQuoteTable.getStockQuoteId(uri);
-                c = db.query(PortfolioContract.StockQuoteTable.TABLE_NAME, projection,
-                        BaseColumns._ID + "=" + stockQuoteId,
-                        selectionArgs, null, null, sortOrder);
-                break;
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
+        }
+        Context context = getContext();
+        if (context != null) {
+            c.setNotificationUri(context.getContentResolver(), uri);
         }
         return c;
     }
@@ -114,10 +78,6 @@ public class PortfolioProvider extends ContentProvider {
                 return PortfolioContract.StockTable.CONTENT_TYPE;
             case STOCK_ID:
                 return PortfolioContract.StockTable.CONTENT_ITEM_TYPE;
-            case STOCK_QUOTE:
-                return PortfolioContract.StockQuoteTable.CONTENT_TYPE;
-            case STOCK_QUOTE_ID:
-                return PortfolioContract.StockQuoteTable.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
@@ -135,15 +95,13 @@ public class PortfolioProvider extends ContentProvider {
                 returnUri = PortfolioContract.StockTable.buildStockUri(stockId);
                 break;
             }
-            case STOCK_QUOTE: {
-                long quoteId = db.insertOrThrow(PortfolioContract.StockQuoteTable.TABLE_NAME, null, values);
-                returnUri = PortfolioContract.StockQuoteTable.buildStockQuoteUri(quoteId);
-                break;
-            }
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        Context context = getContext();
+        if (context != null) {
+            context.getContentResolver().notifyChange(uri, null);
+        }
         return returnUri;
     }
 
@@ -154,7 +112,7 @@ public class PortfolioProvider extends ContentProvider {
 
         String id;
         String selectionCriteria;
-
+        int rowsDeleted;
         // this makes delete all rows return the number of rows deleted
         if (selection == null) selection = "1";
 
@@ -166,18 +124,18 @@ public class PortfolioProvider extends ContentProvider {
                 selectionCriteria = BaseColumns._ID + "=" + id
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
 
-                return db.delete(PortfolioContract.StockTable.TABLE_NAME, selectionCriteria, selectionArgs);
-            case STOCK_QUOTE:
-                return db.delete(PortfolioContract.StockQuoteTable.TABLE_NAME, selection, selectionArgs);
-            case STOCK_QUOTE_ID:
-                id = PortfolioContract.StockQuoteTable.getStockQuoteId(uri);
-                selectionCriteria = BaseColumns._ID + "=" + id
-                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
-
-                return db.delete(PortfolioContract.StockQuoteTable.TABLE_NAME, selectionCriteria, selectionArgs);
+                rowsDeleted = db.delete(PortfolioContract.StockTable.TABLE_NAME, selectionCriteria, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
+        if (rowsDeleted != 0) {
+            Context context = getContext();
+            if (context != null) {
+                context.getContentResolver().notifyChange(uri, null);
+            }
+        }
+        return rowsDeleted;
     }
 
     @Override
@@ -185,21 +143,4 @@ public class PortfolioProvider extends ContentProvider {
         return 0;
     }
 
-
-    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> operations)
-            throws OperationApplicationException {
-        final SQLiteDatabase db = mPortfolioDbHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            final int numOperations = operations.size();
-            final ContentProviderResult[] results = new ContentProviderResult[numOperations];
-            for (int i = 0; i < numOperations; i++) {
-                results[i] = operations.get(i).apply(this, results, i);
-            }
-            db.setTransactionSuccessful();
-            return results;
-        } finally {
-            db.endTransaction();
-        }
-    }
 }

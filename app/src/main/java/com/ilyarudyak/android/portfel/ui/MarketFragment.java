@@ -94,7 +94,6 @@ public class MarketFragment extends Fragment implements
         mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
-        MarketUpdateService.setServiceAlarm(getActivity());
         getActivity().startService(MarketUpdateService.newIntent(getActivity()));
     }
 
@@ -129,7 +128,7 @@ public class MarketFragment extends Fragment implements
 
     // helper methods
     private void setRecyclerView(List<Stock> stocks) {
-
+        Log.d(TAG, "setting recycler view...");
         if (stocks != null && stocks.size() > 0) {
             // set layout manager
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -142,6 +141,7 @@ public class MarketFragment extends Fragment implements
             // set adapter
             MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
             mRecyclerView.setAdapter(marketDataAdapter);
+            Log.d(TAG, "setting recycler view DONE");
         }
     }
     private String[] concat(String[] a, String[] b) {
@@ -368,8 +368,9 @@ public class MarketFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d(TAG, "i'm done");
+        Log.d(TAG, "onLoadFinished() is called...");
         if (cursor != null && cursor.getCount() > 0) {
+            Log.d(TAG, "cursor is not null and count > 0");
             setRecyclerView(DataUtils.buildStockList(cursor));
         }
 

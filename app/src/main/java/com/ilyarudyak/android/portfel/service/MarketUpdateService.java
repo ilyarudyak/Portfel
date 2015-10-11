@@ -7,7 +7,9 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -38,21 +40,14 @@ public class MarketUpdateService extends IntentService {
 
     public static void setServiceAlarm(Context context) {
 
-        Log.d(TAG, "service starting...");
-
-        // fetch data only if network is available
-        if (!MiscUtils.isNetworkAvailableAndConnected(context)) {
-            return;
-        }
-
-        Log.d(TAG, "network is available...");
+        Log.d(TAG, "setting alarm...");
 
         Intent i = newIntent(context);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + POLL_INTERVAL, POLL_INTERVAL, pi);
+                SystemClock.elapsedRealtime(), POLL_INTERVAL, pi);
     }
 
     public static Intent newIntent(Context context) {
@@ -63,14 +58,19 @@ public class MarketUpdateService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         Log.d(TAG, "starting service...");
+
+        // fetch data only if network is available
+        if (!MiscUtils.isNetworkAvailableAndConnected(this)) {
+            return;
+        }
+
+        Log.d(TAG, "network is available...");
         ArrayList<ContentProviderOperation> cpo = new ArrayList<>();
 
         Uri dirStockUri = PortfolioContract.StockTable.CONTENT_URI;
-        Uri dirStockQuoteUri = PortfolioContract.StockQuoteTable.CONTENT_URI;
 
         // delete stocks from db before fetching
-        getContentResolver().delete(dirStockUri, null, null);
-        getContentResolver().delete(dirStockQuoteUri, null, null);
+        cpo.add(ContentProviderOperation.newDelete(dirStockUri).build());
 
         // get stocks from shared prefs
         String[] stockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.STOCKS));
@@ -85,15 +85,18 @@ public class MarketUpdateService extends IntentService {
 
         // insert this stocks into db
         if (stocks != null) {
-            for (Stock stock: stocks.values()) {
-                ContentValues valuesStock = DataUtils.buildContentValuesStock(stock);
-                Uri uri = getContentResolver().insert(dirStockUri, valuesStock);
-                String id = PortfolioContract.StockTable.getStockId(uri);
-                ContentValues valuesStockQuotes = DataUtils.buildContentValuesStockQuote(stock, Integer.parseInt(id));
-                getContentResolver().insert(dirStockQuoteUri, valuesStockQuotes);
-            }
-
             Log.d(TAG, "inserting data into db...");
+            for (Stock stock: stocks.values()) {
+                ContentValues valuesStock = DataUtils.buildContentValues(stock);
+                cpo.add(ContentProviderOperation.newInsert(dirStockUri).withValues(valuesStock).build());
+            }
         }
+
+        try {
+            getContentResolver().applyBatch(PortfolioContract.CONTENT_AUTHORITY, cpo);
+        } catch (RemoteException | OperationApplicationException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "inserting data into db DONE");
     }
 }
