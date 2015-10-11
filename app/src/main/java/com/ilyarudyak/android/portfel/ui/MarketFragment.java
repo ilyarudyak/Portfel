@@ -36,8 +36,8 @@ import android.widget.TextView;
 
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
-import com.ilyarudyak.android.portfel.data.MarketUpdateService;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
+import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
@@ -94,10 +94,8 @@ public class MarketFragment extends Fragment implements
         mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
-//        new FetchMarketData().execute(concat(mIndexSymbols, mStockSymbols));
-
-        Intent intent = new Intent(getActivity(), MarketUpdateService.class);
-        getActivity().startService(intent);
+        MarketUpdateService.setServiceAlarm(getActivity());
+        getActivity().startService(MarketUpdateService.newIntent(getActivity()));
     }
 
     @Override
@@ -124,6 +122,7 @@ public class MarketFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -370,7 +369,7 @@ public class MarketFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.d(TAG, "i'm done");
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             setRecyclerView(DataUtils.buildStockList(cursor));
         }
 

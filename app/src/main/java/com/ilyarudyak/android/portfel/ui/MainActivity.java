@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setToolbar();
         setViewPager();
         setTabLayout();
+
     }
 
     // helper methods

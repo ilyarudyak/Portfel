@@ -1,13 +1,19 @@
-package com.ilyarudyak.android.portfel.data;
+package com.ilyarudyak.android.portfel.service;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Log;
 
+import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
+import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
 
 import java.io.IOException;
@@ -23,10 +29,34 @@ import yahoofinance.YahooFinance;
 public class MarketUpdateService extends IntentService {
 
     public static final String TAG = MarketUpdateService.class.getSimpleName();
+    private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_DAY;
 
     public MarketUpdateService() {
         super(TAG);
 
+    }
+
+    public static void setServiceAlarm(Context context) {
+
+        Log.d(TAG, "service starting...");
+
+        // fetch data only if network is available
+        if (!MiscUtils.isNetworkAvailableAndConnected(context)) {
+            return;
+        }
+
+        Log.d(TAG, "network is available...");
+
+        Intent i = newIntent(context);
+        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + POLL_INTERVAL, POLL_INTERVAL, pi);
+    }
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MarketUpdateService.class);
     }
 
     @Override

@@ -128,16 +128,23 @@ public class PortfolioProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         final SQLiteDatabase db = mPortfolioDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
+        Uri returnUri;
         switch(match) {
-            case STOCK:
+            case STOCK: {
                 long stockId = db.insertOrThrow(PortfolioContract.StockTable.TABLE_NAME, null, values);
-                return PortfolioContract.StockTable.buildStockUri(stockId);
-            case STOCK_QUOTE:
+                returnUri = PortfolioContract.StockTable.buildStockUri(stockId);
+                break;
+            }
+            case STOCK_QUOTE: {
                 long quoteId = db.insertOrThrow(PortfolioContract.StockQuoteTable.TABLE_NAME, null, values);
-                return PortfolioContract.StockQuoteTable.buildStockQuoteUri(quoteId);
+                returnUri = PortfolioContract.StockQuoteTable.buildStockQuoteUri(quoteId);
+                break;
+            }
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     @Override
