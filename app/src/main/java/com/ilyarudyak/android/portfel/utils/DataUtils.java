@@ -5,10 +5,12 @@ import android.database.Cursor;
 
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import yahoofinance.Stock;
+import yahoofinance.quotes.stock.StockQuote;
 
 /**
  * Created by ilyarudyak on 10/6/15.
@@ -23,7 +25,8 @@ public class DataUtils {
         cv.put(PortfolioContract.StockTable.NAME, s.getName());
         cv.put(PortfolioContract.StockTable.CURRENCY, s.getCurrency());
         cv.put(PortfolioContract.StockTable.STOCK_EXCHANGE, s.getStockExchange());
-//        cv.put(PortfolioContract.StockQuoteTable.PRICE, s.getQuote().getPrice().toString());
+        cv.put(PortfolioContract.StockTable.PRICE, s.getQuote().getPrice().toString());
+        cv.put(PortfolioContract.StockTable.PREVIOUS_CLOSE, s.getQuote().getPreviousClose().toString());
 
         return cv;
     }
@@ -39,14 +42,14 @@ public class DataUtils {
                 stock.setCurrency(c.getString(c.getColumnIndex(PortfolioContract.StockTable.CURRENCY)));
                 stock.setStockExchange(c.getString(c.getColumnIndex(PortfolioContract.StockTable.STOCK_EXCHANGE)));
 
-//                StockQuote quote = new StockQuote(symbol);
-//                quote.setPrice(new BigDecimal(c.getString(c.getColumnIndex(PortfolioContract.StockQuoteTable.PRICE))));
-//                stock.setQuote(quote);
+                StockQuote quote = new StockQuote(symbol);
+                quote.setPrice(new BigDecimal(c.getString(c.getColumnIndex(PortfolioContract.StockTable.PRICE))));
+                quote.setPreviousClose(new BigDecimal(c.getString(c.getColumnIndex(PortfolioContract.StockTable.PREVIOUS_CLOSE))));
+                stock.setQuote(quote);
                 stockList.add(stock);
             } while (c.moveToNext());
         }
 
-//        c.close();
         return stockList;
     }
 }

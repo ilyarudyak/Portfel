@@ -20,28 +20,22 @@ public class PortfolioDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         final String SQL_CREATE_STOCK_TABLE = "CREATE TABLE " + PortfolioContract.StockTable.TABLE_NAME + " (" +
-                PortfolioContract.StockTable._ID +              " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                PortfolioContract.StockTable.SYMBOL +           " INTEGER UNIQUE NOT NULL, " +
-                PortfolioContract.StockTable.NAME +             " TEXT NOT NULL, " +
-                PortfolioContract.StockTable.CURRENCY +         " TEXT NOT NULL, " +
-                PortfolioContract.StockTable.STOCK_EXCHANGE +   " TEXT NOT NULL " +
-                " );";
-
-        final String SQL_CREATE_STOCK_QUOTE_TABLE = "CREATE TABLE " + PortfolioContract.StockQuoteTable.TABLE_NAME + " (" +
-                PortfolioContract.StockQuoteTable._ID +         " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                PortfolioContract.StockQuoteTable.STOCK_ID +    " INTEGER NOT NULL, " +
-                PortfolioContract.StockQuoteTable.PRICE +       " TEXT NOT NULL " +
+                PortfolioContract.StockTable._ID +                  " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PortfolioContract.StockTable.SYMBOL +               " INTEGER UNIQUE NOT NULL, " +
+                PortfolioContract.StockTable.NAME +                 " TEXT NOT NULL, " +
+                PortfolioContract.StockTable.CURRENCY +             " TEXT NOT NULL, " +
+                PortfolioContract.StockTable.STOCK_EXCHANGE +       " TEXT NOT NULL, " +
+                PortfolioContract.StockTable.PRICE +                " TEXT NOT NULL, " +
+                PortfolioContract.StockTable.PREVIOUS_CLOSE +       " TEXT NOT NULL " +
                 " );";
 
         db.execSQL(SQL_CREATE_STOCK_TABLE);
-        db.execSQL(SQL_CREATE_STOCK_QUOTE_TABLE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + PortfolioContract.StockTable.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + PortfolioContract.StockQuoteTable.TABLE_NAME);
         onCreate(db);
     }
 }

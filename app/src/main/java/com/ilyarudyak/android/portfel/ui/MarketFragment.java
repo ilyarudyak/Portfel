@@ -36,8 +36,8 @@ import android.widget.TextView;
 
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
-import com.ilyarudyak.android.portfel.data.MarketUpdateService;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
+import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
@@ -94,10 +94,7 @@ public class MarketFragment extends Fragment implements
         mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
-//        new FetchMarketData().execute(concat(mIndexSymbols, mStockSymbols));
-
-        Intent intent = new Intent(getActivity(), MarketUpdateService.class);
-        getActivity().startService(intent);
+        getActivity().startService(MarketUpdateService.newIntent(getActivity()));
     }
 
     @Override
@@ -125,12 +122,13 @@ public class MarketFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         getLoaderManager().initLoader(0, null, this);
     }
 
     // helper methods
     private void setRecyclerView(List<Stock> stocks) {
-
+        Log.d(TAG, "setting recycler view...");
         if (stocks != null && stocks.size() > 0) {
             // set layout manager
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -143,6 +141,7 @@ public class MarketFragment extends Fragment implements
             // set adapter
             MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
             mRecyclerView.setAdapter(marketDataAdapter);
+            Log.d(TAG, "setting recycler view DONE");
         }
     }
     private String[] concat(String[] a, String[] b) {
@@ -330,10 +329,11 @@ public class MarketFragment extends Fragment implements
             String exchange = stock.getStockExchange();
             exchangeTextView.setText(exchange);
 
-            BigDecimal price = new BigDecimal("0");//stock.getQuote().getPrice();
+            BigDecimal price = stock.getQuote().getPrice();
             priceTextView.setText(price.toString());
+//            Log.d(TAG, stock.getQuote().getPreviousClose().toString());
 
-            BigDecimal changeAbs = new BigDecimal("0");//stock.getQuote().getChange();
+            BigDecimal changeAbs = stock.getQuote().getChange();
             changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));
             if (MiscUtils.isNonNegative(changeAbs)) {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
@@ -341,7 +341,7 @@ public class MarketFragment extends Fragment implements
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
             }
 
-            BigDecimal changePercent = new BigDecimal("0");//stock.getQuote().getChangeInPercent();
+            BigDecimal changePercent = stock.getQuote().getChangeInPercent();
             changePercentTextView.setText(MiscUtils.formatChanges(changePercent, true));
             if (MiscUtils.isNonNegative(changePercent)) {
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.accent));
@@ -368,8 +368,9 @@ public class MarketFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d(TAG, "i'm done");
-        if (cursor != null) {
+        Log.d(TAG, "onLoadFinished() is called...");
+        if (cursor != null && cursor.getCount() > 0) {
+            Log.d(TAG, "cursor is not null and count > 0");
             setRecyclerView(DataUtils.buildStockList(cursor));
         }
 

@@ -1,5 +1,8 @@
 package com.ilyarudyak.android.portfel.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -76,6 +79,13 @@ public class MiscUtils {
 
         SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_MONTH_ONLY);
         return sdf.format(date);
+
+    }
+
+    public static boolean isNetworkAvailableAndConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean isNetworkAvailable = cm.getActiveNetworkInfo() != null;
+        return isNetworkAvailable && cm.getActiveNetworkInfo().isConnected();
 
     }
 }
