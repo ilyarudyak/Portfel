@@ -23,6 +23,7 @@ import android.content.Loader;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,20 +35,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
+import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
 import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
 
 public class MarketFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -57,6 +62,8 @@ public class MarketFragment extends Fragment implements
 
     private static String[] mIndexSymbols;
     private static String[] mStockSymbols;
+
+    private static Stock mIndexSnP500;
 
     private static final int POSITION_IMAGE = 0;
     private static final int POSITION_HEADER_INDICES = 1;
@@ -98,17 +105,6 @@ public class MarketFragment extends Fragment implements
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
-/*        mFAB = (FloatingActionButton) view.findViewById(R.id.market_fab_add_stock);
-        mFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                mStockSymbols.add("TWTR");
-//                String[] symbols = mStockSymbols.toArray(new String[mStockSymbols.size()]);
-//                new FetchMarketData().execute(symbols);
-            }
-        });*/
-
 
         return view;
     }
@@ -157,8 +153,8 @@ public class MarketFragment extends Fragment implements
             switch (viewType) {
                 case R.id.view_holder_image:
                     view = getActivity().getLayoutInflater().inflate(
-                            R.layout.list_item_market_image, parent, false);
-                    return new ImageViewHolder(getActivity(), view);
+                            R.layout.list_item_market_chart, parent, false);
+                    return new ChartViewHolder(getActivity(), view);
                 case R.id.view_holder_header:
                     view = getActivity().getLayoutInflater().inflate(
                             R.layout.list_item_market_header, parent, false);
@@ -175,7 +171,7 @@ public class MarketFragment extends Fragment implements
 
             Stock stock;
             if (position == POSITION_IMAGE) {
-                ((ImageViewHolder) holder).bindModel();
+                ((ChartViewHolder) holder).bindModel();
             } else if (position == POSITION_HEADER_INDICES) {
                 ((HeaderViewHolder) holder).bindModel(position);
             } else if (POSITION_HEADER_INDICES < position && position < mPositionHeaderStock) {
@@ -208,10 +204,24 @@ public class MarketFragment extends Fragment implements
             }
         }
     }
+    public static class ChartViewHolder extends RecyclerView.ViewHolder {
+
+        private Context context;
+        private LineChart indexLineChart;
+
+        public ChartViewHolder(Context context, View view) {
+            super(view);
+            this.context = context;
+            indexLineChart = (LineChart) view.findViewById(R.id.market_list_item_line_chart);
+        }
+
+        public void bindModel() {
+            new FetchIndexHistory(context, indexLineChart).execute();
+        }
+    }
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
 
         private Context context;
-
         public ImageView indexPlotImageView;
 
         public ImageViewHolder(Context context, View view) {
@@ -222,6 +232,7 @@ public class MarketFragment extends Fragment implements
         }
 
         public void bindModel() {
+
             Picasso.with(context)
                     .load(Config.S_AND_P_URL.toString())
                     .into(indexPlotImageView);
@@ -289,9 +300,14 @@ public class MarketFragment extends Fragment implements
             changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));
             if (MiscUtils.isNonNegative(changeAbs)) {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
+                // return to standard position if cached item is used
+                float rotation = changeIconImageView.getRotation();
+                if (rotation != 0) {
+                    changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
+                    changeIconImageView.setRotation(180);
+                }
             } else {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
-
                 // change color to red and rotate 180 degrees
                 changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
                 changeIconImageView.setRotation(180);
@@ -310,6 +326,44 @@ public class MarketFragment extends Fragment implements
         public void onClick(View itemView) {
             Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
             startActivity(detailIntent);
+        }
+    }
+
+    // ------------------- AsyncTask class -----------------
+
+    private static class FetchIndexHistory extends AsyncTask<Void, Void, Void> {
+
+        private final String TAG = FetchIndexHistory.class.getSimpleName();
+
+        private Context context;
+        private LineChart lineChart;
+
+        public FetchIndexHistory(Context context, LineChart lineChart) {
+            this.context = context;
+            this.lineChart = lineChart;
+        }
+
+        @Override
+        protected Void doInBackground(Void... ignore) {
+            try {
+                String snp500Str = "TSLA";//context.getResources().getString(R.string.index_symbol_sp500);
+                mIndexSnP500 = YahooFinance.get(snp500Str, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void ignore) {
+            try {
+                if (mIndexSnP500 != null) {
+                    Log.d(TAG, mIndexSnP500.getHistory().get(0).getClose().toString());
+                    ChartUtils.buildLineChart(context, lineChart, mIndexSnP500);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

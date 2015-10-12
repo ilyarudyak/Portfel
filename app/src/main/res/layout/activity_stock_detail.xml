@@ -8,7 +8,7 @@
     tools:context="com.ilyarudyak.android.portfel.ui.StockDetailActivity">
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
+        android:id="@+id/market_list_item_line_chart"
         android:layout_width="match_parent"
         android:layout_height="180dp" />
 

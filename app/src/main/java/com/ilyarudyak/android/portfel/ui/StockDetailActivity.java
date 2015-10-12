@@ -11,6 +11,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class StockDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_detail);
 
-        mChart = (LineChart) findViewById(R.id.chart);
+        mChart = (LineChart) findViewById(R.id.market_list_item_line_chart);
 
 
     }
@@ -116,6 +117,7 @@ public class StockDetailActivity extends AppCompatActivity {
         protected void onPostExecute(Void ignore) {
             try {
                 Log.d(TAG, mTesla.getHistory().get(0).getClose().toString());
+                ChartUtils.buildLineChart(StockDetailActivity.this, mChart, mTesla);
                 setChart();
             } catch (IOException e) {
                 e.printStackTrace();
