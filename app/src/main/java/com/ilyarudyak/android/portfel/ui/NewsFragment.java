@@ -1,17 +1,3 @@
-/***
- * Copyright (c) 2012-14 CommonsWare, LLC
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0. Unless required
- * by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
- * <p/>
- * From _The Busy Coder's Guide to Android Development_
- * https://commonsware.com/Android
- */
-
 package com.ilyarudyak.android.portfel.ui;
 
 import android.app.Fragment;
@@ -49,7 +35,6 @@ public class NewsFragment extends Fragment {
     public static final String TAG = NewsFragment.class.getSimpleName();
     private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
 
-    private TextView mTextView;
     private RecyclerView mRecyclerView;
     private Feed mFeed;
 
@@ -80,7 +65,7 @@ public class NewsFragment extends Fragment {
     }
 
     // helper methods
-    private void setRecyclerView(Feed feed) {
+    private void setRecyclerView() {
 
         // set layout manager
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -116,7 +101,7 @@ public class NewsFragment extends Fragment {
         @Override
         protected void onPostExecute(Void ignore) {
             if (mFeed != null) {
-                setRecyclerView(mFeed);
+                setRecyclerView();
             }
         }
     }
@@ -146,14 +131,19 @@ public class NewsFragment extends Fragment {
             if (urlStr != null) {
                 Picasso.with(getActivity())
                         .load(urlStr)
-                        .into(holder.imageView);
+                        .into(holder.thumbnailImageView);
             } else {
-                holder.imageView.setVisibility(View.GONE);
+                holder.thumbnailImageView.setVisibility(View.GONE);
             }
 
             Date date = item.getPublicationDate();
             if (date != null) {
-                holder.dateTextView.setText(MiscUtils.getTimeAgo(date.getTime()));
+                String dateStr = MiscUtils.getTimeAgo(date.getTime());
+                if (dateStr != null) {
+                    holder.dateTextView.setText(dateStr);
+                } else {
+                    holder.clockImageView.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -165,13 +155,15 @@ public class NewsFragment extends Fragment {
     public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        public ImageView imageView;
+        public ImageView thumbnailImageView;
+        public ImageView clockImageView;
         public TextView titleTextView;
         public TextView dateTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.list_item_news_image_view);
+            thumbnailImageView = (ImageView) itemView.findViewById(R.id.list_item_news_image_view);
+            clockImageView = (ImageView) itemView.findViewById(R.id.list_item_news_clock_icon);
             titleTextView = (TextView) itemView.findViewById(R.id.list_item_news_title);
             dateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
 

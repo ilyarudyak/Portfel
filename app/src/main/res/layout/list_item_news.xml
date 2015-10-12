@@ -3,18 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
+    android:background="@color/primary_light"
     >
 
     <ImageView
         android:id="@+id/list_item_news_image_view"
-        android:layout_width="84dp"
+        android:layout_width="96dp"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:layout_marginEnd="8dp"
         />
 
     <TextView
@@ -23,21 +22,34 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/list_item_news_image_view"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-
+        android:layout_marginStart="16dp"
         android:maxLines="2"
         android:ellipsize="end"
+
+        />
+
+    <ImageView
+        android:id="@+id/list_item_news_clock_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/list_item_news_image_view"
+        android:layout_below="@id/list_item_news_title"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_alarm_black_18dp"
+        android:scaleX="0.67"
+        android:scaleY="0.67"
+        android:tint="@color/secondary_text"
         />
 
     <TextView
         android:id="@+id/list_item_news_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/list_item_news_image_view"
+        android:layout_toEndOf="@id/list_item_news_clock_icon"
         android:layout_below="@id/list_item_news_title"
-
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textStyle="italic"
-
+        android:textSize="12sp"
+        android:textColor="@color/secondary_text"
         android:maxLines="1"
         android:ellipsize="end"
         />

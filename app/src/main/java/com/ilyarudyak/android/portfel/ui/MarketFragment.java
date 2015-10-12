@@ -104,7 +104,7 @@ public class MarketFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_market, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.market_recycler_view);
 
-        mFAB = (FloatingActionButton) view.findViewById(R.id.market_fab_add_stock);
+/*        mFAB = (FloatingActionButton) view.findViewById(R.id.market_fab_add_stock);
         mFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +112,7 @@ public class MarketFragment extends Fragment implements
 //                String[] symbols = mStockSymbols.toArray(new String[mStockSymbols.size()]);
 //                new FetchMarketData().execute(symbols);
             }
-        });
+        });*/
 
 
         return view;
