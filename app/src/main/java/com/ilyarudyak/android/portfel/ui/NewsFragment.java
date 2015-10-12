@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,10 +140,16 @@ public class NewsFragment extends Fragment {
             Date date = item.getPublicationDate();
             if (date != null) {
                 String dateStr = MiscUtils.getTimeAgo(date.getTime());
-                if (dateStr != null) {
-                    holder.dateTextView.setText(dateStr);
-                } else {
+                Log.d(TAG, "date=" + dateStr);
+                if (dateStr == null) {
+                    // we don't show clock icon if no time provided
                     holder.clockImageView.setVisibility(View.GONE);
+                    // we clear data - adapter can reuse an item with some string
+                    holder.dateTextView.setText("");
+                } else {
+                    // we return icon - again adapter can reuse an item
+                    holder.clockImageView.setVisibility(View.VISIBLE);
+                    holder.dateTextView.setText(dateStr);
                 }
             }
         }
