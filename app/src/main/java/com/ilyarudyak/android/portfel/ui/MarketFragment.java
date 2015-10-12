@@ -20,9 +20,9 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,15 +44,10 @@ import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 
 public class MarketFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -142,51 +137,6 @@ public class MarketFragment extends Fragment implements
             MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
             mRecyclerView.setAdapter(marketDataAdapter);
             Log.d(TAG, "setting recycler view DONE");
-        }
-    }
-    private String[] concat(String[] a, String[] b) {
-        int aLen = a.length;
-        int bLen = b.length;
-        String[] c= new String[aLen+bLen];
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-        return c;
-    }
-
-    // ------------------- AsyncTask classes -----------------
-
-    private class FetchMarketData extends AsyncTask<String, Void, List<Stock>> {
-
-        @Override
-        protected List<Stock> doInBackground(String ...symbols) {
-
-            Map<String, Stock> indicesAndStocks = new HashMap<>();
-            try {
-                indicesAndStocks = YahooFinance.get(symbols);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return getList(indicesAndStocks);
-        }
-
-        @Override
-        protected void onPostExecute(List<Stock> indicesAndStocks) {
-            setRecyclerView(indicesAndStocks);
-        }
-
-        private List<Stock> getList(Map<String, Stock> indicesAndStocks) {
-            List<Stock> list = new ArrayList<>();
-
-            for (String symbol: mIndexSymbols) {
-                list.add(indicesAndStocks.get(symbol));
-            }
-
-            for (String symbol: mStockSymbols) {
-                list.add(indicesAndStocks.get(symbol));
-            }
-
-            return list;
         }
     }
 
@@ -305,6 +255,7 @@ public class MarketFragment extends Fragment implements
 
         public TextView symbolTextView;
         public TextView exchangeTextView;
+        public ImageView changeIconImageView;
         public TextView priceTextView;
         public TextView changeAbsTextView;
         public TextView changePercentTextView;
@@ -314,6 +265,7 @@ public class MarketFragment extends Fragment implements
             this.context = context;
             symbolTextView = (TextView) itemView.findViewById(R.id.list_item_stock_symbol);
             exchangeTextView = (TextView) itemView.findViewById(R.id.list_item_stock_exchange);
+            changeIconImageView = (ImageView) itemView.findViewById(R.id.list_item_stock_change_icon);
             priceTextView = (TextView) itemView.findViewById(R.id.list_item_stock_price);
             changeAbsTextView = (TextView) itemView.findViewById(R.id.list_item_stock_change_absolute);
             changePercentTextView = (TextView) itemView.findViewById(R.id.list_item_stock_change_percent);
@@ -323,10 +275,10 @@ public class MarketFragment extends Fragment implements
 
         public void bindModel(Stock stock) {
 
-            String symbol = stock.getSymbol();
+            String symbol = stock.getSymbol() + " (NYQ)";
             symbolTextView.setText(symbol);
 
-            String exchange = stock.getStockExchange();
+            String exchange = "14:15 pm";
             exchangeTextView.setText(exchange);
 
             BigDecimal price = stock.getQuote().getPrice();
@@ -339,6 +291,10 @@ public class MarketFragment extends Fragment implements
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
             } else {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
+
+                // change color to red and rotate 180 degrees
+                changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
+                changeIconImageView.setRotation(180);
             }
 
             BigDecimal changePercent = stock.getQuote().getChangeInPercent();

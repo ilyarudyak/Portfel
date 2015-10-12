@@ -16,5 +16,5 @@
     <color name="red">#f44336</color>
 
     <!-- divider in recycler view -->
-    <color name="divider">#ffaaaaaa</color>
+    <color name="divider">@color/semi_light</color>
 </resources>
