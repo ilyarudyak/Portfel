@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.ilyarudyak.android.portfel.R;
 
@@ -41,11 +40,7 @@ public class PortfolioFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_placeholder, container, false);
-
-        TextView text = (TextView) view.findViewById(R.id.placeholder_text_view);
-        int position = getArguments().getInt(KEY_POSITION, -1);
-        text.setText("i'm going to be portfolio fragment");
+        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
         return view;
     }

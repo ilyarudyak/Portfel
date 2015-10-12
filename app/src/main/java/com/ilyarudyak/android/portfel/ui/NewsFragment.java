@@ -58,8 +58,8 @@ public class NewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_news, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.news_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         return view;
     }

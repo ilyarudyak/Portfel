@@ -101,8 +101,8 @@ public class MarketFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_market, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.market_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
 /*        mFAB = (FloatingActionButton) view.findViewById(R.id.market_fab_add_stock);
         mFAB.setOnClickListener(new View.OnClickListener() {
