@@ -58,14 +58,15 @@ public class MarketFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = MarketFragment.class.getSimpleName();
-    private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
+    public static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
+    public static final String SYMBOL = "com.ilyarudyak.android.portfel.ui.SYMBOL";
 
     private static String[] mIndexSymbols;
     private static String[] mStockSymbols;
 
     private static Stock mIndexSnP500;
 
-    private static final int POSITION_IMAGE = 0;
+    private static final int POSITION_CHART = 0;
     private static final int POSITION_HEADER_INDICES = 1;
     // image and indices header before
     private static final int INDEX_POSITION_OFFSET = 2;
@@ -153,7 +154,7 @@ public class MarketFragment extends Fragment implements
             switch (viewType) {
                 case R.id.view_holder_image:
                     view = getActivity().getLayoutInflater().inflate(
-                            R.layout.list_item_market_chart, parent, false);
+                            R.layout.list_item_market_line_chart, parent, false);
                     return new ChartViewHolder(getActivity(), view);
                 case R.id.view_holder_header:
                     view = getActivity().getLayoutInflater().inflate(
@@ -170,7 +171,7 @@ public class MarketFragment extends Fragment implements
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
             Stock stock;
-            if (position == POSITION_IMAGE) {
+            if (position == POSITION_CHART) {
                 ((ChartViewHolder) holder).bindModel();
             } else if (position == POSITION_HEADER_INDICES) {
                 ((HeaderViewHolder) holder).bindModel(position);
@@ -193,7 +194,7 @@ public class MarketFragment extends Fragment implements
         @Override
         public int getItemViewType(int position) {
 
-            if(position == POSITION_IMAGE) {
+            if(position == POSITION_CHART) {
                 return R.id.view_holder_image;
             } else if (position == POSITION_HEADER_INDICES) {
                 return R.id.view_holder_header;
@@ -234,7 +235,7 @@ public class MarketFragment extends Fragment implements
         public void bindModel() {
 
             Picasso.with(context)
-                    .load(Config.S_AND_P_URL.toString())
+                    .load(Config.SP500_URL.toString())
                     .into(indexPlotImageView);
         }
     }
@@ -325,6 +326,8 @@ public class MarketFragment extends Fragment implements
         @Override
         public void onClick(View itemView) {
             Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
+            int index = getAdapterPosition() - mPositionHeaderStock - 1;
+            detailIntent.putExtra(SYMBOL, mStockSymbols[index]);
             startActivity(detailIntent);
         }
     }

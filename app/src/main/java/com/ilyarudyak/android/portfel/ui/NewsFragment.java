@@ -127,7 +127,6 @@ public class NewsFragment extends Fragment {
             String title = item.getTitle();
             holder.titleTextView.setText(title);
 
-//            Log.d(TAG, item.getImageLink());
             String urlStr = item.getImageLink();
             if (urlStr != null) {
                 Picasso.with(getActivity())

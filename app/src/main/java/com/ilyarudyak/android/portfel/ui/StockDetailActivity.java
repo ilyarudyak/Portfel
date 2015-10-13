@@ -1,32 +1,57 @@
 package com.ilyarudyak.android.portfel.ui;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.einmalfel.earl.EarlParser;
+import com.einmalfel.earl.Feed;
+import com.einmalfel.earl.Item;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.api.Config;
+import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
+import com.squareup.picasso.Picasso;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
+import java.util.zip.DataFormatException;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
-import yahoofinance.histquotes.HistoricalQuote;
 
 public class StockDetailActivity extends AppCompatActivity {
 
     private static final String TAG = StockDetailActivity.class.getSimpleName();
-    private LineChart mChart;
-    private Stock mTesla;
+
+    private static final int POSITION_CHART = 0;
+    private static final int POSITION_HEADER_NEWS = 1;
+    private static final int ADDITIONAL_POSITIONS = 2;
+
+    private RecyclerView mRecyclerView;
+
+    // get from intent
+    private String mSymbol;
+
+    // get from async tasks
+    private Stock mStock;
+    private Feed mFeed;
 
     @Override
     protected void onStart() {
@@ -38,65 +63,29 @@ public class StockDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_detail);
-
-        mChart = (LineChart) findViewById(R.id.market_list_item_line_chart);
-
-
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
     }
 
     // helper methods
-    private void setChart() throws IOException {
+    private void setToolbar() {
 
-        // get historical data from stock
-        List<HistoricalQuote> history = mTesla.getHistory();
+    }
+    private void setRecyclerView() {
+        Log.d(TAG, "setting recycler view...");
+        if (mStock != null) {
+            // set layout manager
+            LinearLayoutManager llm = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(llm);
 
-        // set x axis values
-        ArrayList<String> xVals = new ArrayList<>();
-        for (int i = 0; i < history.size(); i++) {
-            xVals.add(MiscUtils.formatMonthOnly(history.get(i).getDate().getTime()));
+            // set divider
+            Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
+            mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+
+            // set adapter
+            StockDetailDataAdapter stockDetailDataAdapter = new StockDetailDataAdapter();
+            mRecyclerView.setAdapter(stockDetailDataAdapter);
+            Log.d(TAG, "setting recycler view DONE");
         }
-
-        // set y axis values
-        ArrayList<Entry> yVals = new ArrayList<>();
-        for (int i = 0; i < history.size(); i++) {
-
-            float val = history.get(i).getClose().floatValue();
-            yVals.add(new Entry(val, i));
-        }
-
-        // create data set
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
-        set1.setColor(getResources().getColor(R.color.accent));
-        set1.setCircleColor(getResources().getColor(R.color.accent));
-        set1.setLineWidth(2f);
-        set1.setCircleSize(4f);
-        set1.setDrawValues(false);
-
-
-        ArrayList<LineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
-        LineData data = new LineData(xVals, dataSets);
-
-        // set chart properties
-        // (a) remove legend and description
-        mChart.getLegend().setEnabled(false);
-        mChart.setDescription("");
-
-        // (b) remove right Y-axis and line from right Y-axis
-        // and auto-adjust left Y-axis
-        mChart.getAxisRight().setEnabled(false);
-        mChart.getAxisLeft().setStartAtZero(false);
-        mChart.getAxisLeft().setDrawAxisLine(false);
-        mChart.setAutoScaleMinMaxEnabled(true);
-
-        // (c) remove grid, add line of X-axis, change position
-        mChart.getXAxis().setDrawGridLines(false);
-        mChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        mChart.getXAxis().setDrawAxisLine(true);
-
-        // set data on chart
-        mChart.setData(data);
-        mChart.invalidate();
     }
 
     private class FetchStockHistory extends AsyncTask<Void, Void, Void> {
@@ -105,8 +94,9 @@ public class StockDetailActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... ignore) {
+            mSymbol = getIntent().getStringExtra(MarketFragment.SYMBOL);
             try {
-                mTesla = YahooFinance.get("TSLA", true);
+                mStock = YahooFinance.get(mSymbol, true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -116,11 +106,180 @@ public class StockDetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void ignore) {
             try {
-                Log.d(TAG, mTesla.getHistory().get(0).getClose().toString());
-                ChartUtils.buildLineChart(StockDetailActivity.this, mChart, mTesla);
-                setChart();
+                new FetchNewsFeed().execute(Config.getCompanyNewsUrl(mSymbol));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private class FetchNewsFeed extends AsyncTask<URL, Void, Void> {
+
+        @Override
+        protected Void doInBackground(URL... urls) {
+
+            InputStream inputStream;
+            try {
+                inputStream = urls[0].openConnection().getInputStream();
+                mFeed = EarlParser.parseOrThrow(inputStream, 0);
+            } catch (IOException | DataFormatException | XmlPullParserException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void ignore) {
+            setToolbar();
+            setRecyclerView();
+        }
+    }
+
+    // ------------------- RecyclerView classes -----------------
+
+    private class StockDetailDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            View view;
+            switch (viewType) {
+                case R.id.view_holder_chart:
+                    view = StockDetailActivity.this.getLayoutInflater().inflate(
+                            R.layout.list_item_market_line_chart, parent, false);
+                    return new ChartViewHolder(view);
+                case R.id.view_holder_header:
+                    view = StockDetailActivity.this.getLayoutInflater().inflate(
+                            R.layout.list_item_market_header, parent, false);
+                    return new HeaderViewHolder(view);
+                default:
+                    view = StockDetailActivity.this.getLayoutInflater().inflate(
+                            R.layout.list_item_news, parent, false);
+                    return new NewsViewHolder(view);
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+            if (position == POSITION_CHART) {
+                ((ChartViewHolder) holder).bindModel();
+            } else if (position == POSITION_HEADER_NEWS) {
+                ((HeaderViewHolder) holder).bindModel();
+            } else {
+                ((NewsViewHolder) holder).bindModel();
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mFeed.getItems().size() + ADDITIONAL_POSITIONS;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+
+            if (position == POSITION_CHART) {
+                return R.id.view_holder_chart;
+            } else if (position == POSITION_HEADER_NEWS) {
+                return R.id.view_holder_header;
+            } else { // position >= 2
+                return R.id.view_holder_news;
+            }
+        }
+    }
+    public class ChartViewHolder extends RecyclerView.ViewHolder {
+
+        private LineChart stockLineChart;
+
+        public ChartViewHolder(View view) {
+            super(view);
+            stockLineChart = (LineChart) view.findViewById(R.id.market_list_item_line_chart);
+        }
+
+        public void bindModel() {
+            try {
+                if (mStock != null) {
+                    ChartUtils.buildLineChart(StockDetailActivity.this, stockLineChart, mStock);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView headerTextView;
+
+        public HeaderViewHolder(View view) {
+            super(view);
+            headerTextView = (TextView) view.findViewById(R.id.market_list_item_header);
+        }
+
+        public void bindModel() {
+
+            headerTextView.setText(StockDetailActivity.this.getResources()
+                        .getString(R.string.stock_detail_header_news));
+        }
+    }
+    public class NewsViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
+
+        public ImageView thumbnailImageView;
+        public ImageView clockImageView;
+        public TextView titleTextView;
+        public TextView dateTextView;
+
+        public NewsViewHolder(View itemView) {
+            super(itemView);
+            thumbnailImageView = (ImageView) itemView.findViewById(R.id.list_item_news_image_view);
+            clockImageView = (ImageView) itemView.findViewById(R.id.list_item_news_clock_icon);
+            titleTextView = (TextView) itemView.findViewById(R.id.list_item_news_title);
+            dateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View itemView) {
+            Item rssItem = mFeed.getItems().get(getAdapterPosition());
+            String itemUrlStr = rssItem.getLink();
+            Intent detailIntent = new Intent(StockDetailActivity.this, NewsDetailActivity.class);
+            detailIntent.putExtra(NewsDetailActivity.EXTRA_RSS_ITEM_URL_STRING, itemUrlStr);
+            startActivity(detailIntent);
+        }
+
+        public void bindModel() {
+            if (mFeed != null) {
+                Item item = mFeed.getItems().get(getAdapterPosition());
+
+                String title = item.getTitle();
+                titleTextView.setText(title);
+
+                String urlStr = item.getImageLink();
+                if (urlStr != null) {
+                    Picasso.with(StockDetailActivity.this)
+                            .load(urlStr)
+                            .into(thumbnailImageView);
+                } else {
+                    thumbnailImageView.setVisibility(View.GONE);
+                }
+
+                Date date = item.getPublicationDate();
+                if (date != null) {
+                    String dateStr = MiscUtils.getTimeAgo(date.getTime());
+                    Log.d(TAG, "date=" + dateStr);
+                    if (dateStr == null) {
+                        // we don't show clock icon if no time provided
+                        clockImageView.setVisibility(View.GONE);
+                        // we clear data - adapter can reuse an item with some string
+                        dateTextView.setText("");
+                    } else {
+                        // we return icon - again adapter can reuse an item
+                        clockImageView.setVisibility(View.VISIBLE);
+                        dateTextView.setText(dateStr);
+                    }
+                }
             }
         }
     }

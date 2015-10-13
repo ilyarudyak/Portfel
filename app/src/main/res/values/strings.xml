@@ -9,11 +9,14 @@
     <string name="tab_title_news">news</string>
     <string name="tab_title_portfolio">portfolio</string>
 
-
     <!-- market fragment -->
     <!-- headers in recycler view -->
     <string name="market_header_indices">Indices</string>
     <string name="market_header_stocks">Stocks</string>
+
+    <!-- stock detail activity-->
+    <!-- headers in recycler view -->
+    <string name="stock_detail_header_news">Company News</string>
 
     <!-- default stock and index symbols-->
     <!-- default index symbols-->
