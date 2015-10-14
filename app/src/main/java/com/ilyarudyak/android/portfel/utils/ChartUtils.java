@@ -3,6 +3,7 @@ package com.ilyarudyak.android.portfel.utils;
 import android.content.Context;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -41,11 +42,11 @@ public class ChartUtils {
         }
 
         // create data set
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
+        LineDataSet set1 = new LineDataSet(yVals, stock.getName());
         set1.setColor(context.getResources().getColor(R.color.accent));
         set1.setCircleColor(context.getResources().getColor(R.color.accent));
         set1.setLineWidth(2f);
-        set1.setCircleSize(4f);
+        set1.setCircleSize(0f);
         set1.setDrawValues(false);
 
 
@@ -54,9 +55,9 @@ public class ChartUtils {
         LineData data = new LineData(xVals, dataSets);
 
         // set chart properties
-        // (a) remove legend and description
-        chart.getLegend().setEnabled(false);
-        chart.setDescription("");
+        // (a) change legend place and set description
+        chart.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_INSIDE);
+        chart.setDescription("previous close: " + stock.getQuote().getPreviousClose());
 
         // (b) remove right Y-axis and line from right Y-axis
         // and auto-adjust left Y-axis

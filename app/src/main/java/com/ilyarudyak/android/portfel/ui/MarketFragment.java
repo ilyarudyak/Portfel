@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.ilyarudyak.android.portfel.R;
-import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
@@ -45,7 +44,6 @@ import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -220,25 +218,6 @@ public class MarketFragment extends Fragment implements
             new FetchIndexHistory(context, indexLineChart).execute();
         }
     }
-    public static class ImageViewHolder extends RecyclerView.ViewHolder {
-
-        private Context context;
-        public ImageView indexPlotImageView;
-
-        public ImageViewHolder(Context context, View view) {
-            super(view);
-            this.context = context;
-            indexPlotImageView = (ImageView) view.findViewById(R.id.market_list_item_image_view);
-
-        }
-
-        public void bindModel() {
-
-            Picasso.with(context)
-                    .load(Config.SP500_URL.toString())
-                    .into(indexPlotImageView);
-        }
-    }
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
 
         private Context context;
@@ -349,7 +328,7 @@ public class MarketFragment extends Fragment implements
         @Override
         protected Void doInBackground(Void... ignore) {
             try {
-                String snp500Str = "TSLA";//context.getResources().getString(R.string.index_symbol_sp500);
+                String snp500Str = context.getResources().getString(R.string.index_symbol_sp500);
                 mIndexSnP500 = YahooFinance.get(snp500Str, true);
             } catch (IOException e) {
                 e.printStackTrace();
