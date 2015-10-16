@@ -59,6 +59,10 @@ public class PrefUtils {
         SharedPreferences.Editor editor = c.getSharedPreferences(PREFS_NAME, 0).edit();
         editor.putStringSet(symbolType, symbols).apply();
     }
+    public static boolean isIndex(Context c, String symbol) {
+        Set<String> indices = getSymbols(c, INDICES);
+        return indices.contains(symbol);
+    }
 
     public static String[] toArray(Set<String> set) {
         return set.toArray(new String[set.size()]);

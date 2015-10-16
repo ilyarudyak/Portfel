@@ -257,9 +257,31 @@ public class MarketFragment extends Fragment implements
             itemView.setOnClickListener(this);
         }
 
+        // if we work with index - get it's name from predefined list
+        private String getNameForIndex(Stock stock) {
+            String symbol = stock.getSymbol();
+            String predefinedName;
+            if (symbol.equals(getActivity().getResources().getString(R.string.index_symbol_sp500))) {
+                predefinedName = getActivity().getResources().getString(R.string.index_symbol_sp500_name);
+            } else if (symbol.equals(getActivity().getResources().getString(R.string.index_symbol_nasdaq))) {
+                predefinedName = getActivity().getResources().getString(R.string.index_symbol_nasdaq_name);
+            } else if (symbol.equals(getActivity().getResources().getString(R.string.index_symbol_nyse_amex))) {
+                predefinedName = getActivity().getResources().getString(R.string.index_symbol_nyse_amex_name);
+            } else {
+                throw new IllegalArgumentException("unknown symbol");
+            }
+            return predefinedName;
+        }
+
         public void bindModel(Stock stock) {
 
-            String symbol = stock.getSymbol() + " (NYQ)";
+            String symbol;
+            if (PrefUtils.isIndex(getActivity(), stock.getSymbol())) {
+                symbol = getNameForIndex(stock) + " (" + stock.getStockExchange() + ")";
+
+            } else {
+                symbol = stock.getSymbol() + " (" + stock.getStockExchange() + ")";
+            }
             symbolTextView.setText(symbol);
 
             String exchange = "14:15 pm";
@@ -267,7 +289,6 @@ public class MarketFragment extends Fragment implements
 
             BigDecimal price = stock.getQuote().getPrice();
             priceTextView.setText(price.toString());
-//            Log.d(TAG, stock.getQuote().getPreviousClose().toString());
 
             BigDecimal changeAbs = stock.getQuote().getChange();
             changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));

@@ -23,6 +23,9 @@
     <string name="index_symbol_sp500">^GSPC</string>
     <string name="index_symbol_nasdaq">^IXIC</string>
     <string name="index_symbol_nyse_amex">^XAX</string>
+    <string name="index_symbol_sp500_name">S&amp;P 500</string>
+    <string name="index_symbol_nasdaq_name">NASDAQ</string>
+    <string name="index_symbol_nyse_amex_name">NYSE AMEX</string>
     <!-- default stock symbols-->
     <string name="stock_symbol_google">GOOG</string>
     <string name="stock_symbol_apple">AAPL</string>
