@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -61,7 +62,7 @@ public class MarketFragment extends Fragment implements
     public static final String SYMBOL = "com.ilyarudyak.android.portfel.ui.SYMBOL";
 
     private RecyclerView mRecyclerView;
-    // TODO - add description
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private static String[] mIndexSymbols;
     private static String[] mStockSymbols;
 
@@ -95,7 +96,7 @@ public class MarketFragment extends Fragment implements
 
         // we start service when: 1) alarm fires and 2) fragment started
         if (savedInstanceState == null) {
-            getActivity().startService(MarketUpdateService.newIntent(getActivity()));
+            refresh();
         }
     }
 
@@ -105,6 +106,15 @@ public class MarketFragment extends Fragment implements
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         return view;
     }
@@ -126,6 +136,9 @@ public class MarketFragment extends Fragment implements
             mRecyclerView.setAdapter(marketDataAdapter);
             Log.d(TAG, "setting recycler view DONE");
         }
+    }
+    private void refresh() {
+        getActivity().startService(MarketUpdateService.newIntent(getActivity()));
     }
 
     // ------------------- RecyclerView classes -----------------
@@ -316,9 +329,14 @@ public class MarketFragment extends Fragment implements
         @Override
         public void onClick(View itemView) {
             Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
-            int index = getAdapterPosition() - mPositionHeaderStock - 1;
-            detailIntent.putExtra(SYMBOL, mStockSymbols[index]);
-            startActivity(detailIntent);
+
+            // set listener only for stocks (not indices)
+            int adapterPosition = getAdapterPosition();
+            if (adapterPosition > mPositionHeaderStock) {
+                int index = getAdapterPosition() - mPositionHeaderStock - 1;
+                detailIntent.putExtra(SYMBOL, mStockSymbols[index]);
+                startActivity(detailIntent);
+            }
         }
     }
 
