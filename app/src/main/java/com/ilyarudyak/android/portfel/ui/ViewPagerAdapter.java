@@ -46,7 +46,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         Fragment f;
         switch (position) {
             case 0: {
-                f = MarketFragment.newInstance(position);
+                f = MarketFragment.newInstance();
                 break;
             }
             case 1: {

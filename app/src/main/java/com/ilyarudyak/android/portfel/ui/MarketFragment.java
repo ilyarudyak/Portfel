@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -56,46 +55,47 @@ public class MarketFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = MarketFragment.class.getSimpleName();
-    public static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
+
+    // used to transfer stock symbol to detail activity as intent extra
     public static final String SYMBOL = "com.ilyarudyak.android.portfel.ui.SYMBOL";
 
+    private RecyclerView mRecyclerView;
+    // TODO - add description
     private static String[] mIndexSymbols;
     private static String[] mStockSymbols;
 
+    // used to build S&P500 chart
     private static Stock mIndexSnP500;
 
+    /* these constants are used for recycler view with multiple parts:
+    *  1) chart 2) header indices 3) indices 4) header stocks 5) stocks
+    * */
     private static final int POSITION_CHART = 0;
     private static final int POSITION_HEADER_INDICES = 1;
-    // image and indices header before
+    // 2 = 1 position for image + 1position for  indices header
     private static final int INDEX_POSITION_OFFSET = 2;
-    // 1 position - image, 2 position - headers
+    // 3 = 1 position for image + 2 positions for headers
     private static final int ADDITIONAL_POSITIONS = 3;
-
     // this is not const - it depends on mIndexSymbols length
     private static int mPositionHeaderStock;
 
-    private RecyclerView mRecyclerView;
-    private FloatingActionButton mFAB;
-
-    public static MarketFragment newInstance(int position) {
-
-        MarketFragment pf = new MarketFragment();
-        Bundle args = new Bundle();
-        args.putInt(KEY_POSITION, position);
-        pf.setArguments(args);
-
-        return pf;
+    public static MarketFragment newInstance() {
+        return new MarketFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // we store symbols to show in the fragment in shared prefs and use them to fetch info from yahoo
         mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.INDICES));
         mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
-        getActivity().startService(MarketUpdateService.newIntent(getActivity()));
+        // we start service when: 1) alarm fires and 2) fragment started
+        if (savedInstanceState == null) {
+            getActivity().startService(MarketUpdateService.newIntent(getActivity()));
+        }
     }
 
     @Override
@@ -106,14 +106,6 @@ public class MarketFragment extends Fragment implements
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-
-        getLoaderManager().initLoader(0, null, this);
     }
 
     // helper methods
@@ -281,11 +273,8 @@ public class MarketFragment extends Fragment implements
             if (MiscUtils.isNonNegative(changeAbs)) {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
                 // return to standard position if cached item is used
-                float rotation = changeIconImageView.getRotation();
-                if (rotation != 0) {
-                    changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
-                    changeIconImageView.setRotation(180);
-                }
+                changeIconImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_change_history_black_24dp));
+                changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
             } else {
                 changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
                 // change color to red and rotate 180 degrees
@@ -313,6 +302,11 @@ public class MarketFragment extends Fragment implements
 
     // ------------------- AsyncTask class -----------------
 
+    /**
+     * Fetch index (currently S&P500) data with history using yahoo finance
+     * library. We then use historical data to build a yearly chart. We call
+     * this task within recycler view adapter.
+     * */
     private static class FetchIndexHistory extends AsyncTask<Void, Void, Void> {
 
         private final String TAG = FetchIndexHistory.class.getSimpleName();
@@ -328,6 +322,7 @@ public class MarketFragment extends Fragment implements
         @Override
         protected Void doInBackground(Void... ignore) {
             try {
+                // this is the only place where we use context - to get string resources
                 String snp500Str = context.getResources().getString(R.string.index_symbol_sp500);
                 mIndexSnP500 = YahooFinance.get(snp500Str, true);
             } catch (IOException e) {
@@ -340,7 +335,6 @@ public class MarketFragment extends Fragment implements
         protected void onPostExecute(Void ignore) {
             try {
                 if (mIndexSnP500 != null) {
-                    Log.d(TAG, mIndexSnP500.getHistory().get(0).getClose().toString());
                     ChartUtils.buildLineChart(context, lineChart, mIndexSnP500);
                 }
             } catch (IOException e) {
@@ -350,6 +344,11 @@ public class MarketFragment extends Fragment implements
     }
 
     // ------------------ loader methods ------------------
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
