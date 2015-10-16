@@ -73,8 +73,8 @@ public class MarketUpdateService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirStockUri).build());
 
         // get indices and stocks from shared prefs; we store them in one table in DB
-        String[] indexSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.INDICES));
-        String[] stockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.STOCKS));
+        String[] indexSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.INDEX));
+        String[] stockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.STOCK));
 
         // fetch new information about indices and stocks and add it to queue
         addToBatch(cpo, fetchSymbols(indexSymbols), dirStockUri);

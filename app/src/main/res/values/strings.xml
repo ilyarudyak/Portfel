@@ -13,7 +13,6 @@
     <!-- headers in recycler view -->
     <string name="market_header_indices">Indices</string>
     <string name="market_header_stocks">Stocks</string>
-
     <!-- title and label in a dialog to add stock -->
     <string name="market_dialog_add_stock_title">Add Stock</string>
     <string name="market_dialog_add_stock_label">Enter Symbol: </string>
@@ -21,6 +20,8 @@
     <!-- stock detail activity-->
     <!-- headers in recycler view -->
     <string name="stock_detail_header_news">Company News</string>
+    <!-- delete stock action in options menu-->
+    <string name="action_delete_stock">Delete</string>
 
     <!-- default stock and index symbols-->
     <!-- default index symbols-->

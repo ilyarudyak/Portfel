@@ -118,7 +118,8 @@ public class PortfolioProvider extends ContentProvider {
 
         switch(match) {
             case STOCK:
-                return db.delete(PortfolioContract.StockTable.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(PortfolioContract.StockTable.TABLE_NAME, selection, selectionArgs);
+                break;
             case STOCK_ID:
                 id = PortfolioContract.StockTable.getStockId(uri);
                 selectionCriteria = BaseColumns._ID + "=" + id

@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,9 +22,11 @@ import com.einmalfel.earl.Item;
 import com.github.mikephil.charting.charts.LineChart;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
+import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
+import com.ilyarudyak.android.portfel.utils.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -68,7 +73,8 @@ public class StockDetailActivity extends AppCompatActivity {
 
     // helper methods
     private void setToolbar() {
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
     private void setRecyclerView() {
         Log.d(TAG, "setting recycler view...");
@@ -88,6 +94,34 @@ public class StockDetailActivity extends AppCompatActivity {
         }
     }
 
+    // ------------------ options menu -------------------------
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_stock_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_delete_stock) {
+            PrefUtils.removeSymbol(this, PrefUtils.STOCK, mSymbol);
+            getContentResolver().delete(PortfolioContract.StockTable.CONTENT_URI,
+                    PortfolioContract.StockTable.SYMBOL + " = '" + mSymbol + "'", null);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ----------------------- async tasks ---------------------------
+
     private class FetchStockHistory extends AsyncTask<Void, Void, Void> {
 
         private final String TAG = FetchStockHistory.class.getSimpleName();
@@ -95,6 +129,7 @@ public class StockDetailActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... ignore) {
             mSymbol = getIntent().getStringExtra(MarketFragment.SYMBOL);
+            Log.d(TAG, "symbol=" + mSymbol);
             try {
                 mStock = YahooFinance.get(mSymbol, true);
             } catch (IOException e) {

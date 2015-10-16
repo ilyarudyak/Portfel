@@ -19,16 +19,16 @@ public class PrefUtils {
     // name of shared prefs file, that contains stocks
     // and indices symbols for market fragment
     public static final String PREFS_NAME = "symbols";
-    public static final String INDICES = "indices";
-    public static final String STOCKS = "stocks";
+    public static final String INDEX = "index";
+    public static final String STOCK = "stock";
 
     public static Set<String> getSymbols(Context c, String symbolType) {
         String[] defaultSymbols;
         switch (symbolType) {
-            case INDICES:
+            case INDEX:
                 defaultSymbols = c.getResources().getStringArray(R.array.index_symbols_default);
                 break;
-            case STOCKS:
+            case STOCK:
                 defaultSymbols = c.getResources().getStringArray(R.array.stock_symbols_default);
                 break;
             default:
@@ -60,7 +60,7 @@ public class PrefUtils {
         editor.putStringSet(symbolType, symbols).apply();
     }
     public static boolean isIndex(Context c, String symbol) {
-        Set<String> indices = getSymbols(c, INDICES);
+        Set<String> indices = getSymbols(c, INDEX);
         return indices.contains(symbol);
     }
 

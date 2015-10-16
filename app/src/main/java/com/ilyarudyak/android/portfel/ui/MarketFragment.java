@@ -90,8 +90,8 @@ public class MarketFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
         // we store symbols to show in the fragment in shared prefs and use them to fetch info from yahoo
-        mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.INDICES));
-        mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCKS));
+        mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.INDEX));
+        mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCK));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
         // we start service when: 1) alarm fires and 2) fragment started
