@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -352,9 +353,13 @@ public class MarketFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+        // we store indices and stocks in the same table -
+        // indices before stocks and fetch them in this order
+        String sortOrder = BaseColumns._ID;
         return new CursorLoader(getActivity(),
                 PortfolioContract.StockTable.CONTENT_URI,
-                null, null, null, null);
+                null, null, null, sortOrder);
     }
 
     @Override

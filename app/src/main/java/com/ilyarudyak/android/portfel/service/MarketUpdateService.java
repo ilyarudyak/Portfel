@@ -72,25 +72,13 @@ public class MarketUpdateService extends IntentService {
         // delete stocks from db before fetching
         cpo.add(ContentProviderOperation.newDelete(dirStockUri).build());
 
-        // get stocks from shared prefs
+        // get indices and stocks from shared prefs; we store them in one table in DB
+        String[] indexSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.INDICES));
         String[] stockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getBaseContext(), PrefUtils.STOCKS));
 
-        // fetch new information about stocks
-        Map<String, Stock> stocks = null;
-        try {
-            stocks = YahooFinance.get(stockSymbols);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // insert this stocks into db
-        if (stocks != null) {
-            Log.d(TAG, "inserting data into db...");
-            for (Stock stock: stocks.values()) {
-                ContentValues valuesStock = DataUtils.buildContentValues(stock);
-                cpo.add(ContentProviderOperation.newInsert(dirStockUri).withValues(valuesStock).build());
-            }
-        }
+        // fetch new information about indices and stocks and add it to queue
+        addToBatch(cpo, fetchSymbols(indexSymbols), dirStockUri);
+        addToBatch(cpo, fetchSymbols(stockSymbols), dirStockUri);
 
         try {
             getContentResolver().applyBatch(PortfolioContract.CONTENT_AUTHORITY, cpo);
@@ -99,4 +87,35 @@ public class MarketUpdateService extends IntentService {
         }
         Log.d(TAG, "inserting data into db DONE");
     }
+
+    private Map<String, Stock> fetchSymbols(String[] symbols) {
+        Map<String, Stock> symbolsMap = null;
+        try {
+            symbolsMap = YahooFinance.get(symbols);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return symbolsMap;
+    }
+
+    private void addToBatch(ArrayList<ContentProviderOperation> cpo,
+                            Map<String, Stock> symbolsMap, Uri uri) {
+        if (symbolsMap != null) {
+            Log.d(TAG, "inserting data into db...");
+            for (Stock stock: symbolsMap.values()) {
+                ContentValues valuesStock = DataUtils.buildContentValues(stock);
+                cpo.add(ContentProviderOperation.newInsert(uri).withValues(valuesStock).build());
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
