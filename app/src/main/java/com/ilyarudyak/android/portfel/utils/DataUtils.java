@@ -1,6 +1,7 @@
 package com.ilyarudyak.android.portfel.utils;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
@@ -34,7 +35,6 @@ public class DataUtils {
 
         return cv;
     }
-
     public static List<Stock> buildStockList(Cursor c) {
 
         List<Stock> stockList = new ArrayList<>();
@@ -58,5 +58,19 @@ public class DataUtils {
         }
 
         return stockList;
+    }
+    public static boolean isAlreadyInWatchlist(Context context, Stock stock) {
+        String selection = PortfolioContract.StockTable.SYMBOL + " = " + "'" + stock.getSymbol() + "'";
+        Cursor c = context.getContentResolver().query(PortfolioContract.StockTable.CONTENT_URI, null,
+                selection, null, null);
+        if (c != null) {
+            if (c.getCount() > 0) {
+                c.close();
+                return true;
+            } else {
+                c.close();
+            }
+        }
+        return false;
     }
 }
