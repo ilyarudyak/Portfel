@@ -284,8 +284,8 @@ public class MarketFragment extends Fragment implements
             }
             symbolTextView.setText(symbol);
 
-            String exchange = "14:15 pm";
-            exchangeTextView.setText(exchange);
+            String time = MiscUtils.formatTimeOnly(stock.getQuote().getLastTradeTime().getTime());
+            exchangeTextView.setText(time);
 
             BigDecimal price = stock.getQuote().getPrice();
             priceTextView.setText(price.toString());

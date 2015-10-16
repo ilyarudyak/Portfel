@@ -7,6 +7,9 @@ import com.ilyarudyak.android.portfel.data.PortfolioContract;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import yahoofinance.Stock;
@@ -27,6 +30,7 @@ public class DataUtils {
         cv.put(PortfolioContract.StockTable.STOCK_EXCHANGE, s.getStockExchange());
         cv.put(PortfolioContract.StockTable.PRICE, s.getQuote().getPrice().toString());
         cv.put(PortfolioContract.StockTable.PREVIOUS_CLOSE, s.getQuote().getPreviousClose().toString());
+        cv.put(PortfolioContract.StockTable.LAST_TRADE_TIME, s.getQuote().getLastTradeTime().getTimeInMillis());
 
         return cv;
     }
@@ -45,6 +49,9 @@ public class DataUtils {
                 StockQuote quote = new StockQuote(symbol);
                 quote.setPrice(new BigDecimal(c.getString(c.getColumnIndex(PortfolioContract.StockTable.PRICE))));
                 quote.setPreviousClose(new BigDecimal(c.getString(c.getColumnIndex(PortfolioContract.StockTable.PREVIOUS_CLOSE))));
+                Calendar calendar = GregorianCalendar.getInstance();
+                calendar.setTime(new Date(Long.parseLong(c.getString(c.getColumnIndex(PortfolioContract.StockTable.LAST_TRADE_TIME)))));
+                quote.setLastTradeTime(calendar);
                 stock.setQuote(quote);
                 stockList.add(stock);
             } while (c.moveToNext());

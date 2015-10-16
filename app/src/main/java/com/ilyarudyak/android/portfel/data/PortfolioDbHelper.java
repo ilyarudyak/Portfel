@@ -26,7 +26,8 @@ public class PortfolioDbHelper extends SQLiteOpenHelper {
                 PortfolioContract.StockTable.CURRENCY +             " TEXT NOT NULL, " +
                 PortfolioContract.StockTable.STOCK_EXCHANGE +       " TEXT NOT NULL, " +
                 PortfolioContract.StockTable.PRICE +                " TEXT NOT NULL, " +
-                PortfolioContract.StockTable.PREVIOUS_CLOSE +       " TEXT NOT NULL " +
+                PortfolioContract.StockTable.PREVIOUS_CLOSE +       " TEXT NOT NULL, " +
+                PortfolioContract.StockTable.LAST_TRADE_TIME +      " TEXT NOT NULL " +
                 " );";
 
         db.execSQL(SQL_CREATE_STOCK_TABLE);

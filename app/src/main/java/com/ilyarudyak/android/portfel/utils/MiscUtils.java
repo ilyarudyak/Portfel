@@ -19,6 +19,7 @@ public class MiscUtils {
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
     private static final String PATTERN_MONTH_ONLY = "MMM";
+    private static final String PATTERN_TIME_ONLY = "h:mm a";
 
     /** format changes in stocks and indices:
      *  add + to positive changes and
@@ -78,6 +79,16 @@ public class MiscUtils {
     public static String formatMonthOnly(Date date) {
 
         SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_MONTH_ONLY);
+        return sdf.format(date);
+
+    }
+
+    /**
+     * format Date object to show only time like this 16:00
+     * */
+    public static String formatTimeOnly(Date date) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN_TIME_ONLY);
         return sdf.format(date);
 
     }

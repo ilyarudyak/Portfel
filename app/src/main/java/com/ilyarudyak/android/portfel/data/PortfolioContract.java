@@ -25,6 +25,7 @@ public class PortfolioContract {
         public static final String STOCK_EXCHANGE = "exchange";
         public static final String PRICE = "price";
         public static final String PREVIOUS_CLOSE = "previous_close";
+        public static final String LAST_TRADE_TIME = "last_trade_time";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI
                 .buildUpon()
