@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.einmalfel.earl.EarlParser;
 import com.einmalfel.earl.Feed;
 import com.einmalfel.earl.Item;
-import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.CandleStickChart;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
@@ -215,7 +215,7 @@ public class StockDetailActivity extends AppCompatActivity {
             switch (viewType) {
                 case R.id.view_holder_chart:
                     view = StockDetailActivity.this.getLayoutInflater().inflate(
-                            R.layout.list_item_market_line_chart, parent, false);
+                            R.layout.list_item_stock_detail_candlestick_chart, parent, false);
                     return new ChartViewHolder(view);
                 case R.id.view_holder_header:
                     view = StockDetailActivity.this.getLayoutInflater().inflate(
@@ -259,17 +259,17 @@ public class StockDetailActivity extends AppCompatActivity {
     }
     public class ChartViewHolder extends RecyclerView.ViewHolder {
 
-        private LineChart stockLineChart;
+        private CandleStickChart candleStickChart;
 
         public ChartViewHolder(View view) {
             super(view);
-            stockLineChart = (LineChart) view.findViewById(R.id.market_list_item_line_chart);
+            candleStickChart = (CandleStickChart) view.findViewById(R.id.stock_detail_list_item_candlestick_chart);
         }
 
         public void bindModel() {
             try {
                 if (mStock != null) {
-                    ChartUtils.buildLineChart(StockDetailActivity.this, stockLineChart, mStock);
+                    ChartUtils.buildCandleStickChart(StockDetailActivity.this, candleStickChart, mStock);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

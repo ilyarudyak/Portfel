@@ -2,9 +2,14 @@ package com.ilyarudyak.android.portfel.utils;
 
 import android.content.Context;
 
+import com.github.mikephil.charting.charts.BarLineChartBase;
+import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.CandleData;
+import com.github.mikephil.charting.data.CandleDataSet;
+import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -53,6 +58,51 @@ public class ChartUtils {
         dataSets.add(set1);
         LineData data = new LineData(xVals, dataSets);
 
+        setChartProperties(context, chart, stock);
+
+        // set data on chart
+        chart.setData(data);
+        chart.invalidate();
+    }
+
+    public static void buildCandleStickChart(Context context, CandleStickChart chart, Stock stock) throws IOException {
+
+        // get historical data from stock
+        List<HistoricalQuote> history = stock.getHistory();
+
+        List<CandleEntry> yVals1 = new ArrayList<>();
+        for (int i = 0; i < history.size(); i++) {
+            HistoricalQuote hq = history.get(i);
+            CandleEntry entry = new CandleEntry(i, hq.getHigh().intValue(), hq.getLow().intValue(),
+                            hq.getOpen().intValue(), hq.getClose().intValue());
+            yVals1.add(entry);
+        }
+
+        List<String> xVals = new ArrayList<>();
+        for (int i = 0; i < history.size(); i++) {
+            xVals.add(MiscUtils.formatMonthOnly(history.get(i).getDate().getTime()));
+        }
+
+        CandleDataSet set1 = new CandleDataSet(yVals1, stock.getName());
+        set1.setDrawValues(false);
+        set1.setColor(context.getResources().getColor(R.color.primary));
+        set1.setShadowColor(context.getResources().getColor(R.color.primary));
+        set1.setDecreasingColor(context.getResources().getColor(R.color.red));
+        set1.setIncreasingColor(context.getResources().getColor(R.color.accent));
+        set1.setBodySpace(.3f);
+
+        CandleData data = new CandleData(xVals, set1);
+
+        setChartProperties(context, chart, stock);
+
+        // set additional properties
+        chart.setAutoScaleMinMaxEnabled(false);
+
+        chart.setData(data);
+        chart.invalidate();
+    }
+
+    private static void setChartProperties(Context context, BarLineChartBase chart, Stock stock) {
         // set chart properties
         // (a) change legend place and set description
         chart.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_INSIDE);
@@ -78,10 +128,20 @@ public class ChartUtils {
         // (d) set background color
         chart.setGridBackgroundColor(context.getResources().getColor(R.color.primary_light));
         chart.setBackgroundColor(context.getResources().getColor(R.color.primary_light));
-
-
-        // set data on chart
-        chart.setData(data);
-        chart.invalidate();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
