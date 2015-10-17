@@ -63,8 +63,10 @@ public class MarketFragment extends Fragment implements
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
     private static String[] mIndexSymbols;
     private static String[] mStockSymbols;
+    private List<Stock> mIndicesAndStocks;
 
     // used to build S&P500 chart
     private static Stock mIndexSnP500;
@@ -120,9 +122,9 @@ public class MarketFragment extends Fragment implements
     }
 
     // helper methods
-    private void setRecyclerView(List<Stock> stocks) {
+    private void setRecyclerView() {
         Log.d(TAG, "setting recycler view...");
-        if (stocks != null && stocks.size() > 0) {
+        if (mIndicesAndStocks != null && mIndicesAndStocks.size() > 0) {
             // set layout manager
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(llm);
@@ -132,7 +134,7 @@ public class MarketFragment extends Fragment implements
             mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
 
             // set adapter
-            MarketDataAdapter marketDataAdapter = new MarketDataAdapter(stocks);
+            MarketDataAdapter marketDataAdapter = new MarketDataAdapter();
             mRecyclerView.setAdapter(marketDataAdapter);
             Log.d(TAG, "setting recycler view DONE");
         }
@@ -144,12 +146,6 @@ public class MarketFragment extends Fragment implements
     // ------------------- RecyclerView classes -----------------
 
     private class MarketDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        private List<Stock> mIndicesAndStocks;
-
-        public MarketDataAdapter(List<Stock> indicesAndStocks) {
-            mIndicesAndStocks = indicesAndStocks;
-        }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -333,8 +329,8 @@ public class MarketFragment extends Fragment implements
             // set listener only for stocks (not indices)
             int adapterPosition = getAdapterPosition();
             if (adapterPosition > mPositionHeaderStock) {
-                int index = getAdapterPosition() - mPositionHeaderStock - 1;
-                detailIntent.putExtra(SYMBOL, mStockSymbols[index]);
+                int index = getAdapterPosition() - ADDITIONAL_POSITIONS;
+                detailIntent.putExtra(SYMBOL, mIndicesAndStocks.get(index).getSymbol());
                 startActivity(detailIntent);
             }
         }
@@ -406,7 +402,8 @@ public class MarketFragment extends Fragment implements
         Log.d(TAG, "onLoadFinished() is called...");
         if (cursor != null && cursor.getCount() > 0) {
             Log.d(TAG, "cursor is not null and count > 0");
-            setRecyclerView(DataUtils.buildStockList(cursor));
+            mIndicesAndStocks = DataUtils.buildStockList(cursor);
+            setRecyclerView();
         }
 
     }

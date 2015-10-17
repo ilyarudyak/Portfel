@@ -286,7 +286,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
         public void bindModel() {
             if (mFeed != null) {
-                Item item = mFeed.getItems().get(getAdapterPosition());
+                Item item = mFeed.getItems().get(getAdapterPosition() - ADDITIONAL_POSITIONS);
 
                 String title = item.getTitle();
                 titleTextView.setText(title);
