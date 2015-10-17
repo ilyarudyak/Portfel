@@ -14,7 +14,7 @@
     >
 
     <TextView
-        android:id="@+id/list_item_stock_symbol"
+        android:id="@+id/list_item_stock_symbol_exchange"
 
         app:layout_gravity="fill_horizontal"
         android:gravity="center"
@@ -28,7 +28,7 @@
         />
 
     <TextView
-        android:id="@+id/list_item_stock_exchange"
+        android:id="@+id/list_item_stock_time"
 
         app:layout_gravity="fill_horizontal"
         android:gravity="center"

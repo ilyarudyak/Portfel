@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:backgroundTint="@color/primary"
+    app:orientation="vertical"
+
+    app:rowCount="3"
+    app:columnCount="2"
+
+    android:background="@color/primary_light"
+    >
+
+    <TextView
+        android:id="@+id/activity_stock_detail_name"
+        app:layout_gravity="fill_horizontal"
+        android:gravity="start|center_vertical"
+        app:layout_rowWeight="1"
+        app:layout_columnSpan="2"
+        android:paddingStart="16dp"
+
+        android:text="Google Inc."
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="@color/primary_light"
+        />
+
+    <TextView
+        android:id="@+id/activity_stock_detail_exchange"
+        app:layout_gravity="fill_horizontal"
+        android:gravity="start|center_vertical"
+        app:layout_rowWeight="1"
+        app:layout_columnSpan="2"
+        android:paddingStart="16dp"
+
+        android:text="GOOG (NYS) 2.30 pm"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/primary_semi_light"
+        />
+
+    <TextView
+        android:id="@+id/activity_stock_detail_price"
+        app:layout_rowWeight="3"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_horizontal"
+        android:gravity="start|center_vertical"
+        android:paddingStart="16dp"
+
+        android:text="540.48"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textColor="@color/primary_light"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/activity_stock_detail_container"
+        app:layout_rowWeight="3"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_vertical"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/activity_stock_detail_change_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_change_history_black_24dp"
+            android:tint="@color/accent"
+            android:scaleX=".75"
+            android:scaleY=".75"
+            android:layout_gravity="center"
+            />
+        <TextView
+            android:id="@+id/activity_stock_detail_change_abs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 2.29 "
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/accent"
+            />
+
+        <TextView
+            android:id="@+id/activity_stock_detail_change_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(2.05%)"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/accent"
+            />
+
+    </LinearLayout>
+
+</android.support.v7.widget.GridLayout>

@@ -21,10 +21,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="hello, my friend!"/>
+            <include layout="@layout/activity_stock_detail_toolbar"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

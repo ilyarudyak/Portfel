@@ -256,8 +256,8 @@ public class MarketFragment extends Fragment implements
         public StockViewHolder(Context context, View itemView) {
             super(itemView);
             this.context = context;
-            symbolTextView = (TextView) itemView.findViewById(R.id.list_item_stock_symbol);
-            exchangeTextView = (TextView) itemView.findViewById(R.id.list_item_stock_exchange);
+            symbolTextView = (TextView) itemView.findViewById(R.id.list_item_stock_symbol_exchange);
+            exchangeTextView = (TextView) itemView.findViewById(R.id.list_item_stock_time);
             changeIconImageView = (ImageView) itemView.findViewById(R.id.list_item_stock_change_icon);
             priceTextView = (TextView) itemView.findViewById(R.id.list_item_stock_price);
             changeAbsTextView = (TextView) itemView.findViewById(R.id.list_item_stock_change_absolute);
