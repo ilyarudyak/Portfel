@@ -27,7 +27,7 @@
         />
 
     <TextView
-        android:id="@+id/activity_stock_detail_exchange"
+        android:id="@+id/activity_stock_detail_subtitle"
         app:layout_gravity="fill_horizontal"
         android:gravity="start|center_vertical"
         app:layout_rowWeight="1"

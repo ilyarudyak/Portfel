@@ -81,6 +81,34 @@ public class StockDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        if (mStock != null) {
+
+            TextView name = (TextView) findViewById(R.id.activity_stock_detail_name);
+            name.setText(mStock.getName());
+
+            TextView subtitle = (TextView) findViewById(R.id.activity_stock_detail_subtitle);
+            String subtitleStr = mStock.getSymbol() + " (" + mStock.getStockExchange() + ") " +
+                    MiscUtils.formatTimeOnly(mStock.getQuote().getLastTradeTime().getTime());
+            subtitle.setText(subtitleStr);
+
+            TextView price = (TextView) findViewById(R.id.activity_stock_detail_price);
+            price.setText(mStock.getQuote().getPrice().toString());
+
+            ImageView changeIcon = (ImageView) findViewById(R.id.activity_stock_detail_change_icon);
+            TextView changeAbs = (TextView) findViewById(R.id.activity_stock_detail_change_abs);
+            TextView changePercent = (TextView) findViewById(R.id.activity_stock_detail_change_percent);
+            changeAbs.setText(" " + MiscUtils.formatChanges(mStock.getQuote().getChange(), false) + " ");
+            changePercent.setText("(" + MiscUtils.formatChanges(mStock.getQuote().getChangeInPercent(), true) + ")");
+            if (!MiscUtils.isNonNegative(mStock.getQuote().getChange())) {
+                changeIcon.setImageTintList(getResources().getColorStateList(R.color.red));
+                changeIcon.setRotation(180);
+                changeAbs.setTextColor(getResources().getColor(R.color.red));
+                changePercent.setTextColor(getResources().getColor(R.color.red));
+            }
+
+
+        }
     }
     private void setRecyclerView() {
         Log.d(TAG, "setting recycler view...");
