@@ -43,8 +43,7 @@ public class ChartUtils {
 
         // create data set
         LineDataSet set1 = new LineDataSet(yVals, stock.getName());
-        set1.setColor(context.getResources().getColor(R.color.accent));
-        set1.setCircleColor(context.getResources().getColor(R.color.accent));
+        set1.setColor(context.getResources().getColor(R.color.primary));
         set1.setLineWidth(2f);
         set1.setCircleSize(0f);
         set1.setDrawValues(false);
@@ -57,19 +56,29 @@ public class ChartUtils {
         // set chart properties
         // (a) change legend place and set description
         chart.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_INSIDE);
+        chart.getLegend().setTextColor(context.getResources().getColor(R.color.primary_semi_light));
         chart.setDescription("previous close: " + stock.getQuote().getPreviousClose());
+        chart.setDescriptionColor(context.getResources().getColor(R.color.primary_semi_light));
 
         // (b) remove right Y-axis and line from right Y-axis
         // and auto-adjust left Y-axis
         chart.getAxisRight().setEnabled(false);
         chart.getAxisLeft().setStartAtZero(false);
         chart.getAxisLeft().setDrawAxisLine(false);
+        chart.getAxisLeft().setTextColor(context.getResources().getColor(R.color.primary));
         chart.setAutoScaleMinMaxEnabled(true);
 
         // (c) remove grid, add line of X-axis, change position
         chart.getXAxis().setDrawGridLines(false);
         chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         chart.getXAxis().setDrawAxisLine(true);
+        chart.getXAxis().setGridColor(context.getResources().getColor(R.color.primary_semi_light));
+        chart.getXAxis().setTextColor(context.getResources().getColor(R.color.primary));
+
+        // (d) set background color
+        chart.setGridBackgroundColor(context.getResources().getColor(R.color.primary_light));
+        chart.setBackgroundColor(context.getResources().getColor(R.color.primary_light));
+
 
         // set data on chart
         chart.setData(data);
