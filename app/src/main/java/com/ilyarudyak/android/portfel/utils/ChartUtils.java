@@ -17,6 +17,7 @@ import com.ilyarudyak.android.portfel.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import yahoofinance.Stock;
@@ -31,6 +32,9 @@ public class ChartUtils {
 
         // get historical data from stock
         List<HistoricalQuote> history = stock.getHistory();
+        
+        // we have to reverse list - original list goes from recent to old items
+        Collections.reverse(history);
 
         // set x axis values
         ArrayList<String> xVals = new ArrayList<>();
@@ -69,6 +73,9 @@ public class ChartUtils {
 
         // get historical data from stock
         List<HistoricalQuote> history = stock.getHistory();
+
+        // we have to reverse list - original list goes from recent to old items
+        Collections.reverse(history);
 
         List<CandleEntry> yVals1 = new ArrayList<>();
         for (int i = 0; i < history.size(); i++) {
