@@ -43,6 +43,9 @@
     <string name="stock_symbol_microsoft">MSFT</string>
     <string name="stock_symbol_intel">INTC</string>
 
+    <!-- preferences -->
+    <!-- time in millis of previous notification key -->
+    <string name="pref_last_notification">com.ilyarudyak.android.portfel.LastNotificationTime</string>
 
     <!-- misc strings -->
     <string name="hello_world">Hello world!</string>

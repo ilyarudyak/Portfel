@@ -2,36 +2,54 @@ package com.ilyarudyak.android.portfel.service;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.einmalfel.earl.EarlParser;
+import com.einmalfel.earl.Feed;
+import com.einmalfel.earl.Item;
+import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.zip.DataFormatException;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 /**
- * Created by ilyarudyak on 10/6/15.
- */
+ * Fetch indices and stocks from list that we store in prefs and
+ * insert them in DB (we clear DB every time before inserting data).
+ * We insert indices and then stocks so we do preserve order between
+ * categories but not between symbols in each category.
+ * */
 public class MarketUpdateService extends IntentService {
 
     public static final String TAG = MarketUpdateService.class.getSimpleName();
     private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_DAY;
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int NOTIFY_ID = 1337;
 
     public MarketUpdateService() {
         super(TAG);
@@ -64,6 +82,9 @@ public class MarketUpdateService extends IntentService {
             return;
         }
 
+        // notify about company that user choose in prefs
+        notifyCompanyNews();
+
         Log.d(TAG, "network is available...");
         ArrayList<ContentProviderOperation> cpo = new ArrayList<>();
 
@@ -88,6 +109,7 @@ public class MarketUpdateService extends IntentService {
         Log.d(TAG, "inserting data into db DONE");
     }
 
+    // helper methods
     private Map<String, Stock> fetchSymbols(String[] symbols) {
         Map<String, Stock> symbolsMap = null;
         try {
@@ -97,7 +119,6 @@ public class MarketUpdateService extends IntentService {
         }
         return symbolsMap;
     }
-
     private void addToBatch(ArrayList<ContentProviderOperation> cpo,
                             Map<String, Stock> symbolsMap, Uri uri) {
         if (symbolsMap != null) {
@@ -108,6 +129,69 @@ public class MarketUpdateService extends IntentService {
             }
         }
     }
+
+    // ------------------- notifications ---------------------
+
+    /**
+     * We notify about company news.
+     * When: one time per day (we store previous time of update in prefs).
+     * What: the first news from feed (specific feed for this company).
+     * Company: the stock symbol that a user can set in prefs.
+     * onClick: DetailStockActivity for this stock is open.
+     * */
+    private void notifyCompanyNews() {
+
+        Feed feed = fetchFeed("GOOG");
+
+        if (feed != null && isNotify()) {
+            // we use first news item
+            Notification notification = buildNotification(feed.getItems().get(0));
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            nm.notify(NOTIFY_ID, notification);
+            updateLastNotificationTime();
+        }
+    }
+
+    // helper methods
+    private Feed fetchFeed(String symbol) {
+        Feed feed = null;
+        InputStream inputStream;
+        try {
+            inputStream = Config.getCompanyNewsUrl(symbol).openConnection().getInputStream();
+            feed = EarlParser.parseOrThrow(inputStream, 0);
+        } catch (IOException | DataFormatException | XmlPullParserException e) {
+            e.printStackTrace();
+        }
+        return feed;
+    }
+    private boolean isNotify() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String lastNotificationKey = this.getString(R.string.pref_last_notification);
+        long lastSync = prefs.getLong(lastNotificationKey, 0);
+        // check if time elapsed since last notification is more than 1 day
+        return System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS;
+    }
+    private Notification buildNotification(Item rssItem) {
+
+        Notification.Builder nb = new Notification.Builder(this);
+        nb.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setContentTitle(rssItem.getTitle())
+                .setContentText(rssItem.getDescription())
+                .setSmallIcon(android.R.drawable.stat_sys_download_done);
+
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        nb.setContentIntent(PendingIntent.getActivity(this, 0, i, 0));
+        return nb.build();
+    }
+    private void updateLastNotificationTime() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String lastNotificationKey = this.getString(R.string.pref_last_notification);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(lastNotificationKey, System.currentTimeMillis());
+        editor.apply();
+    }
+
 }
 
 
