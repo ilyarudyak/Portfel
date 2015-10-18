@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +49,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
     private static final int POSITION_CHART = 0;
     private static final int POSITION_HEADER_NEWS = 1;
+    // 2 = 1 for chart + 1 for header
     private static final int ADDITIONAL_POSITIONS = 2;
 
     private RecyclerView mRecyclerView;
@@ -73,6 +75,11 @@ public class StockDetailActivity extends AppCompatActivity {
     }
 
     // helper methods
+    private void setViews() {
+        setToolbar();
+        setRecyclerView();
+        setShareFab();
+    }
     private void setToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -126,6 +133,26 @@ public class StockDetailActivity extends AppCompatActivity {
             mRecyclerView.setAdapter(stockDetailDataAdapter);
             Log.d(TAG, "setting recycler view DONE");
         }
+    }
+    private void setShareFab() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.stock_detail_fab_share);
+        if (mStock != null) {
+            final String message = mStock.getSymbol() + ":" + mStock.getStockExchange() + " " +
+                    mStock.getQuote().getPrice() + " (" + MiscUtils.formatChanges(
+                    mStock.getQuote().getChange(), false) + ")";
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    share(message);
+                }
+            });
+        }
+    }
+    private void share(String message) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_TEXT, message);
+        startActivity(i);
     }
 
     // ------------------ options menu -------------------------
@@ -199,8 +226,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void ignore) {
-            setToolbar();
-            setRecyclerView();
+            setViews();
         }
     }
 
@@ -311,7 +337,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View itemView) {
-            Item rssItem = mFeed.getItems().get(getAdapterPosition());
+            Item rssItem = mFeed.getItems().get(getAdapterPosition() - ADDITIONAL_POSITIONS);
             String itemUrlStr = rssItem.getLink();
             Intent detailIntent = new Intent(StockDetailActivity.this, NewsDetailActivity.class);
             detailIntent.putExtra(NewsDetailActivity.EXTRA_RSS_ITEM_URL_STRING, itemUrlStr);
