@@ -23,6 +23,7 @@ import com.einmalfel.earl.Item;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
+import com.ilyarudyak.android.portfel.ui.MainActivity;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
@@ -141,7 +142,7 @@ public class MarketUpdateService extends IntentService {
      * */
     private void notifyCompanyNews() {
 
-        Feed feed = fetchFeed("GOOG");
+        Feed feed = fetchFeed();
 
         if (feed != null && isNotify()) {
             // we use first news item
@@ -153,11 +154,11 @@ public class MarketUpdateService extends IntentService {
     }
 
     // helper methods
-    private Feed fetchFeed(String symbol) {
+    private Feed fetchFeed() {
         Feed feed = null;
         InputStream inputStream;
         try {
-            inputStream = Config.getCompanyNewsUrl(symbol).openConnection().getInputStream();
+            inputStream = Config.REUTERS_URL.openConnection().getInputStream();
             feed = EarlParser.parseOrThrow(inputStream, 0);
         } catch (IOException | DataFormatException | XmlPullParserException e) {
             e.printStackTrace();
@@ -173,16 +174,29 @@ public class MarketUpdateService extends IntentService {
     }
     private Notification buildNotification(Item rssItem) {
 
+        String description = rssItem.getDescription();
+        final int DESCRIPTION_SIZE = 140;
+        if (description != null) {
+            description = description.substring(0, DESCRIPTION_SIZE) + "...";
+        }
+
+        // build normal notification
         Notification.Builder nb = new Notification.Builder(this);
         nb.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setContentTitle(rssItem.getTitle())
-                .setContentText(rssItem.getDescription())
-                .setSmallIcon(android.R.drawable.stat_sys_download_done);
+                .setContentText(description)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setPriority(Notification.PRIORITY_HIGH);
 
-        Intent i = new Intent(Intent.ACTION_VIEW);
+        Intent i = new Intent(this, MainActivity.class);
         nb.setContentIntent(PendingIntent.getActivity(this, 0, i, 0));
-        return nb.build();
+
+        // build big and reach notification
+        Notification.BigTextStyle bts = new Notification.BigTextStyle(nb);
+        bts.bigText(description);
+
+        return bts.build();
     }
     private void updateLastNotificationTime() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
