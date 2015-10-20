@@ -1,0 +1,93 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:background="@color/primary_light"
+    >
+
+    <TextView
+        android:id="@+id/widget_symbol"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/widget_chart"
+
+        android:text="TSLA (NMS)"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/primary"
+        />
+
+    <LinearLayout
+        android:id="@+id/widget_container_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:orientation="horizontal"
+
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/widget_symbol"
+        android:layout_toStartOf="@id/widget_chart"
+        >
+
+        <ImageView
+            android:id="@+id/widget_change_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_change_history_black_24dp"
+            android:tint="@color/accent"
+            android:scaleX=".75"
+            android:scaleY=".75"
+            />
+
+        <TextView
+            android:id="@+id/widget_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="100.50"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/primary"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/widget_container_price"
+        android:layout_toStartOf="@id/widget_chart"
+
+        android:text="+15.10 (+0.05%)"
+        android:textColor="@color/accent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        />
+
+    <ImageView
+        android:id="@+id/widget_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+
+        android:src="@drawable/widget_chart"
+        android:adjustViewBounds="true"
+
+        android:contentDescription="@string/a11y_widget_chart"
+        />
+
+</RelativeLayout>

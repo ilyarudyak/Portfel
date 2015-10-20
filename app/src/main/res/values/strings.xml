@@ -47,6 +47,9 @@
     <!-- time in millis of previous notification key -->
     <string name="pref_last_notification">last_notification</string>
 
+    <!-- a11y -->
+    <string name="a11y_widget_chart">Chart of stock price</string>
+
     <!-- misc strings -->
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
