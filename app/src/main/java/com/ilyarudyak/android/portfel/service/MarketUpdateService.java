@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.os.SystemClock;
@@ -186,7 +187,8 @@ public class MarketUpdateService extends IntentService {
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setContentTitle(rssItem.getTitle())
                 .setContentText(description)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_work_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                 .setPriority(Notification.PRIORITY_HIGH);
 
         Intent i = new Intent(this, MainActivity.class);
