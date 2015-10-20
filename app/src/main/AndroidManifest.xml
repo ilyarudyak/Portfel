@@ -28,7 +28,8 @@
 
         <provider
             android:name=".data.PortfolioProvider"
-            android:authorities="com.ilyarudyak.android.portfel" />
+            android:authorities="com.ilyarudyak.android.portfel"
+            android:exported="false"/>
 
         <service android:name=".service.MarketUpdateService"/>
 
@@ -38,6 +39,18 @@
             </intent-filter>
         </receiver>
 
-    </application>
+        <!-- service and broadcast receiver for stock widget -->
+        <service android:name=".widget.StockWidgetService" />
+        <receiver
+            android:name=".widget.StockWidgetProvider"
+            android:label="@string/widget_stock_title" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_stock_info" />
+        </receiver>
 
+    </application>
 </manifest>

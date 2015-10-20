@@ -1,12 +1,13 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_stock_relative_layout"
     android:layout_width="match_parent"
     android:layout_height="120dp"
     android:background="@color/primary_light"
     >
 
     <TextView
-        android:id="@+id/widget_symbol"
+        android:id="@+id/widget_stock_symbol"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
@@ -16,7 +17,6 @@
 
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@id/widget_chart"
 
         android:text="TSLA (NMS)"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
@@ -24,7 +24,7 @@
         />
 
     <LinearLayout
-        android:id="@+id/widget_container_price"
+        android:id="@+id/widget_stock_container_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
@@ -34,12 +34,11 @@
         android:orientation="horizontal"
 
         android:layout_alignParentStart="true"
-        android:layout_below="@id/widget_symbol"
-        android:layout_toStartOf="@id/widget_chart"
+        android:layout_below="@id/widget_stock_symbol"
         >
 
         <ImageView
-            android:id="@+id/widget_change_icon"
+            android:id="@+id/widget_stock_change_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_change_history_black_24dp"
@@ -49,7 +48,7 @@
             />
 
         <TextView
-            android:id="@+id/widget_price"
+            android:id="@+id/widget_stock_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -61,15 +60,14 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/widget_change"
+        android:id="@+id/widget_stock_change"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
 
         android:layout_alignParentStart="true"
-        android:layout_below="@id/widget_container_price"
-        android:layout_toStartOf="@id/widget_chart"
+        android:layout_below="@id/widget_stock_container_price"
 
         android:text="+15.10 (+0.05%)"
         android:textColor="@color/accent"
@@ -77,17 +75,17 @@
         />
 
     <ImageView
-        android:id="@+id/widget_chart"
+        android:id="@+id/widget_stock_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
 
-        android:src="@drawable/widget_chart"
+        android:src="@drawable/widget_stock_chart"
         android:adjustViewBounds="true"
 
-        android:contentDescription="@string/a11y_widget_chart"
+        android:contentDescription="@string/a11y_widget_stock_chart"
         />
 
 </RelativeLayout>

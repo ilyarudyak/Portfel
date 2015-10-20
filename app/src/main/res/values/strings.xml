@@ -23,6 +23,9 @@
     <!-- delete stock action in options menu-->
     <string name="action_delete_stock">Delete</string>
 
+    <!-- stock widget -->
+    <string name="widget_stock_title">Stock Quote</string>
+
     <!-- default stock and index symbols-->
     <!-- default index symbols-->
     <string name="index_symbol_sp500">^GSPC</string>
@@ -48,9 +51,8 @@
     <string name="pref_last_notification">last_notification</string>
 
     <!-- a11y -->
-    <string name="a11y_widget_chart">Chart of stock price</string>
+    <string name="a11y_widget_stock_chart">Chart of stock price</string>
 
     <!-- misc strings -->
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 </resources>
