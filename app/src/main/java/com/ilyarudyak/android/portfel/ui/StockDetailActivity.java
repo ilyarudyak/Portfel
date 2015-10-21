@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Locale;
 import java.util.zip.DataFormatException;
 
 import yahoofinance.Stock;
@@ -100,16 +101,20 @@ public class StockDetailActivity extends AppCompatActivity {
             subtitle.setText(subtitleStr);
 
             TextView price = (TextView) findViewById(R.id.activity_stock_detail_price);
-            price.setText(mStock.getQuote().getPrice().toString());
+            price.setText(String.format(mStock.getQuote().getPrice().toString(), Locale.US));
 
             ImageView changeIcon = (ImageView) findViewById(R.id.activity_stock_detail_change_icon);
             TextView changeAbs = (TextView) findViewById(R.id.activity_stock_detail_change_abs);
             TextView changePercent = (TextView) findViewById(R.id.activity_stock_detail_change_percent);
-            changeAbs.setText(" " + MiscUtils.formatChanges(mStock.getQuote().getChange(), false) + " ");
-            changePercent.setText("(" + MiscUtils.formatChanges(mStock.getQuote().getChangeInPercent(), true) + ")");
-            if (!MiscUtils.isNonNegative(mStock.getQuote().getChange())) {
-                changeIcon.setImageTintList(getResources().getColorStateList(R.color.red));
-                changeIcon.setRotation(180);
+            changeAbs.setText(MiscUtils.formatChangesDetails(mStock.getQuote().getChange(), false));
+            changePercent.setText(MiscUtils.formatChangesDetails(mStock.getQuote().getChangeInPercent(), true));
+
+            if (MiscUtils.isNonNegative(mStock.getQuote().getChange())) {
+                changeIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_change_history_green_24px));
+                changeAbs.setTextColor(getResources().getColor(R.color.accent));
+                changePercent.setTextColor(getResources().getColor(R.color.accent));
+            } else {
+                changeIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_change_history_red_24dp));
                 changeAbs.setTextColor(getResources().getColor(R.color.red));
                 changePercent.setTextColor(getResources().getColor(R.color.red));
             }

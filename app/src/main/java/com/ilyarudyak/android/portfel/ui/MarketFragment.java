@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -301,23 +300,16 @@ public class MarketFragment extends Fragment implements
 
             BigDecimal changeAbs = stock.getQuote().getChange();
             changeAbsTextView.setText(MiscUtils.formatChanges(changeAbs, false));
-            if (MiscUtils.isNonNegative(changeAbs)) {
-                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
-                // return to standard position if cached item is used
-                changeIconImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_change_history_black_24dp));
-                changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
-            } else {
-                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
-                // change color to red and rotate 180 degrees
-                changeIconImageView.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
-                changeIconImageView.setRotation(180);
-            }
-
             BigDecimal changePercent = stock.getQuote().getChangeInPercent();
             changePercentTextView.setText(MiscUtils.formatChanges(changePercent, true));
-            if (MiscUtils.isNonNegative(changePercent)) {
+
+            if (MiscUtils.isNonNegative(changeAbs)) {
+                changeIconImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_change_history_green_24px));
+                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.accent));
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.accent));
             } else {
+                changeIconImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_change_history_red_24dp));
+                changeAbsTextView.setTextColor(context.getResources().getColor(R.color.red));
                 changePercentTextView.setTextColor(context.getResources().getColor(R.color.red));
             }
         }
