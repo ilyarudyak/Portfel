@@ -372,6 +372,7 @@ public class MarketFragment extends Fragment implements
             try {
                 if (mIndexSnP500 != null) {
                     ChartUtils.buildLineChart(context, lineChart, mIndexSnP500);
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -24,13 +24,19 @@ public class MiscUtils {
     private static final String PATTERN_MONTH_ONLY = "MMM";
     private static final String PATTERN_TIME_ONLY = "h:mm a";
 
-    /** format changes in stocks and indices:
-     *  add + to positive changes and
-     *  % to changes in percent.
+    // ---------------- changes in stocks -----------------
+
+    /**
+     * check if changes are non-negative. we need this to
+     * show the in green or red.
      * */
     public static boolean isNonNegative(BigDecimal number) {
         return number.compareTo(new BigDecimal(0)) >= 0;
     }
+    /** format changes in stocks and indices:
+     *  add + to positive changes and
+     *  % to changes in percent.
+     * */
     public static String formatChanges(BigDecimal change, boolean isPercent) {
 
         String result = change.toString();
@@ -44,6 +50,8 @@ public class MiscUtils {
 
         return result;
     }
+
+    // ---------------- date and time -----------------
 
     /**
      * format time elapsed like 10 minutes ago etc.

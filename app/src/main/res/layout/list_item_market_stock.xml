@@ -2,6 +2,7 @@
 <android.support.v7.widget.GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/list_item_stock_grid_layout"
     android:layout_width="match_parent"
     android:layout_height="72dp"
 
@@ -71,8 +72,6 @@
             />
 
     </LinearLayout>
-
-
 
     <TextView
         android:id="@+id/list_item_stock_change_absolute"

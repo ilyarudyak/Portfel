@@ -5,11 +5,11 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.ui.MainActivity;
+import com.ilyarudyak.android.portfel.utils.MiscUtils;
 
 import java.io.IOException;
 
@@ -48,7 +48,7 @@ public class StockWidgetService extends IntentService {
 
     // helper functions
     private void setRemoteViews(AppWidgetManager appWidgetManager, int appWidgetId) {
-        mRemoteViews = new RemoteViews(getPackageName(), R.layout.widget_stock);
+        mRemoteViews = new RemoteViews(getPackageName(), R.layout.list_item_market_stock);
         bindRemoteViews();
         buildIntent();
         appWidgetManager.updateAppWidget(appWidgetId, mRemoteViews);
@@ -56,7 +56,7 @@ public class StockWidgetService extends IntentService {
     private void buildIntent() {
         Intent launchIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
-        mRemoteViews.setOnClickPendingIntent(R.id.widget_stock_relative_layout, pendingIntent);
+        mRemoteViews.setOnClickPendingIntent(R.id.list_item_stock_grid_layout, pendingIntent);
     }
     private void fetchStock() {
         try {
@@ -67,19 +67,18 @@ public class StockWidgetService extends IntentService {
     }
     private void bindRemoteViews() {
 
-        Log.d(TAG, "trying to set remote views");
-        Log.d(TAG, "stock==null " + (mStock == null));
-
         if (mStock != null) {
-            Log.d(TAG, "price=" + mStock.getQuote().getPrice());
-            // set text fields
-            mRemoteViews.setTextViewText(R.id.widget_stock_symbol, mStock.getSymbol() + " (" + mStock.getStockExchange() + ")");
-            mRemoteViews.setTextViewText(R.id.widget_stock_price, mStock.getQuote().getPrice().toString());
-            String changeStr = mStock.getQuote().getChange() + " (" + mStock.getQuote().getChangeInPercent() + ")";
-            mRemoteViews.setTextViewText(R.id.widget_stock_change, changeStr);
+            mRemoteViews.setTextViewText(R.id.list_item_stock_symbol_exchange, mStock.getSymbol() +
+                    " (" + mStock.getStockExchange() + ")");
+            String timeStr = MiscUtils.formatTimeOnly(mStock.getQuote().getLastTradeTime().getTime());
+            mRemoteViews.setTextViewText(R.id.list_item_stock_time, timeStr);
 
-            // set chart
-//        mRemoteViews.setTextViewText(R.id.time_text_view, mStock.getTime());
+            mRemoteViews.setTextViewText(R.id.list_item_stock_price, mStock.getQuote().getPrice().toString());
+
+            String changeAbsStr = MiscUtils.formatChanges(mStock.getQuote().getChange(), false);
+            mRemoteViews.setTextViewText(R.id.list_item_stock_change_absolute, changeAbsStr);
+            String changeAbsPercent = MiscUtils.formatChanges(mStock.getQuote().getChangeInPercent(), true);
+            mRemoteViews.setTextViewText(R.id.list_item_stock_change_percent, changeAbsPercent);
         }
     }
 

@@ -71,7 +71,7 @@
 
         android:text="+15.10 (+0.05%)"
         android:textColor="@color/accent"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         />
 
     <ImageView
@@ -82,10 +82,18 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
 
-        android:src="@drawable/widget_stock_chart"
         android:adjustViewBounds="true"
 
         android:contentDescription="@string/a11y_widget_stock_chart"
         />
+
+    <!--<com.github.mikephil.charting.charts.CandleStickChart-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/widget_stock_chart"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="120dp"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:background="@color/primary_light"-->
+        <!--/>-->
 
 </RelativeLayout>

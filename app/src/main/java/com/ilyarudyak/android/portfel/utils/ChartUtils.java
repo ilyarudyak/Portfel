@@ -67,8 +67,8 @@ public class ChartUtils {
         // set data on chart
         chart.setData(data);
         chart.invalidate();
+        chart.notifyDataSetChanged();
     }
-
     public static void buildCandleStickChart(Context context, CandleStickChart chart, Stock stock) throws IOException {
 
         // get historical data from stock
@@ -107,8 +107,10 @@ public class ChartUtils {
 
         chart.setData(data);
         chart.invalidate();
+        chart.notifyDataSetChanged();
     }
 
+    // helper methods
     private static void setChartProperties(Context context, BarLineChartBase chart, Stock stock) {
         // set chart properties
         // (a) change legend place and set description
