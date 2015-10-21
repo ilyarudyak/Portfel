@@ -70,9 +70,10 @@ public class MarketFragment extends Fragment implements
     // used to build S&P500 chart
     private static Stock mIndexSnP500;
 
-    /* these constants are used for recycler view with multiple parts:
-    *  1) chart 2) header indices 3) indices 4) header stocks 5) stocks
-    * */
+    /**
+     * these constants are used for recycler view with multiple parts:
+     *  1) chart 2) header indices 3) indices 4) header stocks 5) stocks
+     * */
     private static final int POSITION_CHART = 0;
     private static final int POSITION_HEADER_INDICES = 1;
     // 2 = 1 position for image + 1position for  indices header
@@ -91,8 +92,10 @@ public class MarketFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
         // we store symbols to show in the fragment in shared prefs and use them to fetch info from yahoo
-        mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.INDEX));
-        mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(), PrefUtils.STOCK));
+        mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(),
+                getActivity().getString(R.string.pref_market_symbols_indices)));
+        mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(),
+                getActivity().getString(R.string.pref_market_symbols_stocks)));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
         // we start service when: 1) alarm fires and 2) fragment started
@@ -240,13 +243,12 @@ public class MarketFragment extends Fragment implements
             }
         }
     }
-    public class StockViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
+    public class StockViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private Context context;
 
-        public TextView symbolTextView;
-        public TextView exchangeTextView;
+        public TextView symbolExchangeTextView;
+        public TextView timeTextView;
         public ImageView changeIconImageView;
         public TextView priceTextView;
         public TextView changeAbsTextView;
@@ -255,12 +257,12 @@ public class MarketFragment extends Fragment implements
         public StockViewHolder(Context context, View itemView) {
             super(itemView);
             this.context = context;
-            symbolTextView = (TextView) itemView.findViewById(R.id.widget_stock_symbol_exchange);
-            exchangeTextView = (TextView) itemView.findViewById(R.id.widget_stock_time);
-            changeIconImageView = (ImageView) itemView.findViewById(R.id.widget_stock_change_icon);
-            priceTextView = (TextView) itemView.findViewById(R.id.widget_stock_price);
-            changeAbsTextView = (TextView) itemView.findViewById(R.id.widget_stock_change_absolute);
-            changePercentTextView = (TextView) itemView.findViewById(R.id.widget_stock_change_percent);
+            symbolExchangeTextView = (TextView) itemView.findViewById(R.id.list_item_market_symbol_exchange);
+            timeTextView = (TextView) itemView.findViewById(R.id.list_item_market_time);
+            changeIconImageView = (ImageView) itemView.findViewById(R.id.list_item_market_change_icon);
+            priceTextView = (TextView) itemView.findViewById(R.id.list_item_market_price);
+            changeAbsTextView = (TextView) itemView.findViewById(R.id.list_item_market_change_absolute);
+            changePercentTextView = (TextView) itemView.findViewById(R.id.list_item_market_change_percent);
 
             itemView.setOnClickListener(this);
         }
@@ -290,10 +292,10 @@ public class MarketFragment extends Fragment implements
             } else {
                 symbol = stock.getSymbol() + " (" + stock.getStockExchange() + ")";
             }
-            symbolTextView.setText(symbol);
+            symbolExchangeTextView.setText(symbol);
 
             String time = MiscUtils.formatTimeOnly(stock.getQuote().getLastTradeTime().getTime());
-            exchangeTextView.setText(time);
+            timeTextView.setText(time);
 
             BigDecimal price = stock.getQuote().getPrice();
             priceTextView.setText(price.toString());

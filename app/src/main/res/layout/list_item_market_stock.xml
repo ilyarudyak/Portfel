@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_stock_grid_layout"
+    android:id="@+id/list_item_market_grid_layout"
     android:layout_width="match_parent"
     android:layout_height="72dp"
 
@@ -14,7 +14,7 @@
     >
 
     <TextView
-        android:id="@+id/widget_stock_symbol_exchange"
+        android:id="@+id/list_item_market_symbol_exchange"
 
         android:layout_gravity="fill_horizontal"
         android:gravity="center"
@@ -28,7 +28,7 @@
         />
 
     <TextView
-        android:id="@+id/widget_stock_time"
+        android:id="@+id/list_item_market_time"
 
         android:layout_gravity="fill_horizontal"
         android:gravity="center"
@@ -44,14 +44,14 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:id="@+id/widget_stock_price_container"
+        android:id="@+id/list_item_market_price_container"
         android:layout_rowSpan="2"
         android:layout_gravity="fill_vertical"
         android:gravity="center_vertical|end"
         android:layout_columnWeight="2"
         >
         <ImageView
-            android:id="@+id/widget_stock_change_icon"
+            android:id="@+id/list_item_market_change_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_change_history_black_24dp"
@@ -60,7 +60,7 @@
             android:layout_gravity="center"
             />
         <TextView
-            android:id="@+id/widget_stock_price"
+            android:id="@+id/list_item_market_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="100.50"
@@ -72,7 +72,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/widget_stock_change_absolute"
+        android:id="@+id/list_item_market_change_absolute"
 
         android:layout_gravity="fill_horizontal"
         android:gravity="center"
@@ -87,7 +87,7 @@
         />
 
     <TextView
-        android:id="@+id/widget_stock_change_percent"
+        android:id="@+id/list_item_market_change_percent"
 
         android:layout_gravity="fill_horizontal"
         android:gravity="center"

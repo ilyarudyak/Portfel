@@ -87,7 +87,7 @@ public class AddStockDialogFragment extends DialogFragment implements
         @Override
         protected Integer doInBackground(String... symbols) {
             String symbol = symbols[0];
-            PrefUtils.putSymbol(context, PrefUtils.STOCK, symbol);
+            PrefUtils.putSymbol(context, context.getString(R.string.pref_market_symbols_stocks), symbol);
 
             Stock stock = null;
             try {

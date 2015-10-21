@@ -17,7 +17,6 @@ package com.ilyarudyak.android.portfel.ui.adapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import com.ilyarudyak.android.portfel.R;
@@ -30,40 +29,29 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public static final int NUMBER_OF_FRAGMENTS = 3;
 
     private Context mContext;
-    private FloatingActionButton mFab;
 
-    public ViewPagerAdapter(Context context, FragmentManager fm, FloatingActionButton fab) {
+    public ViewPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
-        mFab = fab;
     }
 
     @Override
     public int getCount() {
-        return (NUMBER_OF_FRAGMENTS);
+        return NUMBER_OF_FRAGMENTS;
     }
 
     @Override
     public Fragment getItem(int position) {
-
-        Fragment f;
         switch (position) {
-            case 0: {
-                f = MarketFragment.newInstance();
-                break;
-            }
-            case 1: {
-                f = NewsFragment.newInstance(position);
-                break;
-            }
-            case 2: {
-                f = PortfolioFragment.newInstance(position);
-                break;
-            }
+            case 0:
+                return MarketFragment.newInstance();
+            case 1:
+                return NewsFragment.newInstance();
+            case 2:
+                return PortfolioFragment.newInstance();
             default:
                 throw new IllegalArgumentException("illegal position");
         }
-        return f;
     }
 
     @Override
@@ -79,5 +67,4 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 throw new IllegalArgumentException("illegal position");
         }
     }
-
 }

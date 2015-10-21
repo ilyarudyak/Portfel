@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void setViewPager() {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mViewPager.setAdapter(new ViewPagerAdapter(this, getFragmentManager(), mFab));
+        mViewPager.setAdapter(new ViewPagerAdapter(this, getFragmentManager()));
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

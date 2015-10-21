@@ -175,7 +175,7 @@ public class StockDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_delete_stock) {
-            PrefUtils.removeSymbol(this, PrefUtils.STOCK, mSymbol);
+            PrefUtils.removeSymbol(this, this.getString(R.string.pref_market_symbols_stocks), mSymbol);
             getContentResolver().delete(PortfolioContract.StockTable.CONTENT_URI,
                     PortfolioContract.StockTable.SYMBOL + " = '" + mSymbol + "'", null);
             Intent intent = new Intent(this, MainActivity.class);

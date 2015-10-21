@@ -34,18 +34,12 @@ import java.util.zip.DataFormatException;
 public class NewsFragment extends Fragment {
 
     public static final String TAG = NewsFragment.class.getSimpleName();
-    private static final String KEY_POSITION = "com.ilyarudyak.android.portfel.ui.POSITION";
 
     private RecyclerView mRecyclerView;
     private Feed mFeed;
 
-    public static NewsFragment newInstance(int position) {
-
+    public static NewsFragment newInstance() {
         NewsFragment pf = new NewsFragment();
-        Bundle args = new Bundle();
-        args.putInt(KEY_POSITION, position);
-        pf.setArguments(args);
-
         return pf;
     }
 
