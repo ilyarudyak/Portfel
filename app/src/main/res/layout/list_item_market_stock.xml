@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout
+<GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/list_item_stock_grid_layout"
+    android:id="@+id/widget_stock_grid_layout"
     android:layout_width="match_parent"
     android:layout_height="72dp"
 
-    app:orientation="vertical"
+    android:orientation="vertical"
 
-    app:rowCount="2"
-    app:columnCount="4"
+    android:rowCount="2"
+    android:columnCount="4"
 
     android:background="@color/primary_light"
     >
 
     <TextView
-        android:id="@+id/list_item_stock_symbol_exchange"
+        android:id="@+id/widget_stock_symbol_exchange"
 
-        app:layout_gravity="fill_horizontal"
+        android:layout_gravity="fill_horizontal"
         android:gravity="center"
 
-        app:layout_rowWeight="1"
-        app:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
 
-        android:text="DOW"
+        android:text="TSLA (NMS)"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:textColor="@color/primary"
         />
 
     <TextView
-        android:id="@+id/list_item_stock_time"
+        android:id="@+id/widget_stock_time"
 
-        app:layout_gravity="fill_horizontal"
+        android:layout_gravity="fill_horizontal"
         android:gravity="center"
 
-        app:layout_rowWeight="1"
-        app:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
 
-        android:text="US"
+        android:text="4:00 PM"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="@color/primary"
 
@@ -45,14 +44,14 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:id="@+id/list_item_stock_price_container"
-        app:layout_rowSpan="2"
-        app:layout_gravity="fill_vertical"
+        android:id="@+id/widget_stock_price_container"
+        android:layout_rowSpan="2"
+        android:layout_gravity="fill_vertical"
         android:gravity="center_vertical|end"
-        app:layout_columnWeight="2"
+        android:layout_columnWeight="2"
         >
         <ImageView
-            android:id="@+id/list_item_stock_change_icon"
+            android:id="@+id/widget_stock_change_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_change_history_black_24dp"
@@ -62,7 +61,7 @@
             android:layout_gravity="center"
             />
         <TextView
-            android:id="@+id/list_item_stock_price"
+            android:id="@+id/widget_stock_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="100.50"
@@ -74,13 +73,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/list_item_stock_change_absolute"
+        android:id="@+id/widget_stock_change_absolute"
 
-        app:layout_gravity="fill_horizontal"
+        android:layout_gravity="fill_horizontal"
         android:gravity="center"
 
-        app:layout_rowWeight="1"
-        app:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
 
         android:text="+15.10"
         android:textColor="@color/accent"
@@ -89,13 +88,13 @@
         />
 
     <TextView
-        android:id="@+id/list_item_stock_change_percent"
+        android:id="@+id/widget_stock_change_percent"
 
-        app:layout_gravity="fill_horizontal"
+        android:layout_gravity="fill_horizontal"
         android:gravity="center"
 
-        app:layout_rowWeight="1"
-        app:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
 
         android:text="+0.05%"
         android:textColor="@color/accent"
@@ -103,4 +102,4 @@
 
         />
 
-</android.support.v7.widget.GridLayout>
+</GridLayout>

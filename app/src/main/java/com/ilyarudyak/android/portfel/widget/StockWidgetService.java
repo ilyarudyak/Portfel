@@ -25,7 +25,7 @@ public class StockWidgetService extends IntentService {
 
     private RemoteViews mRemoteViews;
     private Stock mStock;
-    private String mSymbol = "TSLA";
+    private String mSymbol = "AAPL";
 
     public StockWidgetService() {
         super(StockWidgetService.class.getSimpleName());
@@ -48,7 +48,7 @@ public class StockWidgetService extends IntentService {
 
     // helper functions
     private void setRemoteViews(AppWidgetManager appWidgetManager, int appWidgetId) {
-        mRemoteViews = new RemoteViews(getPackageName(), R.layout.list_item_market_stock);
+        mRemoteViews = new RemoteViews(getPackageName(), R.layout.widget_stock);
         bindRemoteViews();
         buildIntent();
         appWidgetManager.updateAppWidget(appWidgetId, mRemoteViews);
@@ -56,7 +56,7 @@ public class StockWidgetService extends IntentService {
     private void buildIntent() {
         Intent launchIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
-        mRemoteViews.setOnClickPendingIntent(R.id.list_item_stock_grid_layout, pendingIntent);
+        mRemoteViews.setOnClickPendingIntent(R.id.widget_stock_grid_layout, pendingIntent);
     }
     private void fetchStock() {
         try {
@@ -68,18 +68,37 @@ public class StockWidgetService extends IntentService {
     private void bindRemoteViews() {
 
         if (mStock != null) {
-            mRemoteViews.setTextViewText(R.id.list_item_stock_symbol_exchange, mStock.getSymbol() +
+            mRemoteViews.setTextViewText(R.id.widget_stock_symbol_exchange, mStock.getSymbol() +
                     " (" + mStock.getStockExchange() + ")");
             String timeStr = MiscUtils.formatTimeOnly(mStock.getQuote().getLastTradeTime().getTime());
-            mRemoteViews.setTextViewText(R.id.list_item_stock_time, timeStr);
+            mRemoteViews.setTextViewText(R.id.widget_stock_time, timeStr);
 
-            mRemoteViews.setTextViewText(R.id.list_item_stock_price, mStock.getQuote().getPrice().toString());
+            // switch to red icon in case of negative change
+            if (MiscUtils.isNonNegative(mStock.getQuote().getChange())) {
+                mRemoteViews.setImageViewResource(R.id.widget_stock_change_icon, R.drawable.ic_change_history_green_24px);
+                mRemoteViews.setTextColor(R.id.widget_stock_change_absolute, getResources().getColor(R.color.accent));
+                mRemoteViews.setTextColor(R.id.widget_stock_change_percent, getResources().getColor(R.color.accent));
+            } else {
+                mRemoteViews.setImageViewResource(R.id.widget_stock_change_icon, R.drawable.ic_change_history_red_24dp);
+                mRemoteViews.setTextColor(R.id.widget_stock_change_absolute, getResources().getColor(R.color.red));
+                mRemoteViews.setTextColor(R.id.widget_stock_change_percent, getResources().getColor(R.color.red));
+            }
+            mRemoteViews.setTextViewText(R.id.widget_stock_price, mStock.getQuote().getPrice().toString());
 
             String changeAbsStr = MiscUtils.formatChanges(mStock.getQuote().getChange(), false);
-            mRemoteViews.setTextViewText(R.id.list_item_stock_change_absolute, changeAbsStr);
+            mRemoteViews.setTextViewText(R.id.widget_stock_change_absolute, changeAbsStr);
             String changeAbsPercent = MiscUtils.formatChanges(mStock.getQuote().getChangeInPercent(), true);
-            mRemoteViews.setTextViewText(R.id.list_item_stock_change_percent, changeAbsPercent);
+            mRemoteViews.setTextViewText(R.id.widget_stock_change_percent, changeAbsPercent);
         }
     }
-
 }
+
+
+
+
+
+
+
+
+
+
