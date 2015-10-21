@@ -12,7 +12,7 @@
  * https://commonsware.com/Android
  */
 
-package com.ilyarudyak.android.portfel.ui;
+package com.ilyarudyak.android.portfel.ui.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -21,6 +21,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.ui.MarketFragment;
+import com.ilyarudyak.android.portfel.ui.NewsFragment;
+import com.ilyarudyak.android.portfel.ui.PortfolioFragment;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 

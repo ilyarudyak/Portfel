@@ -5,7 +5,5 @@
     android:minHeight="72dp"
     android:updatePeriodMillis="43200000"
     android:initialLayout="@layout/widget_stock_old"
+    android:previewImage="@drawable/widget_stock"
 />
-
-<!--TODO add preview image-->
-<!--android:previewImage="@drawable/small_widget"-->

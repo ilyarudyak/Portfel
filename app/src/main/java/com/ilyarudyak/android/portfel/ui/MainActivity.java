@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
+import com.ilyarudyak.android.portfel.ui.adapter.ViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
