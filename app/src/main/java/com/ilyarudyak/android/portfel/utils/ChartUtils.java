@@ -84,7 +84,9 @@ public class ChartUtils {
         dataSets.add(set1);
         LineData data = new LineData(xVals, dataSets);
 
+        // set chart properties
         setChartProperties(context, chart, stock);
+        chart.animateX(1500);
 
         // set data on chart
         chart.setData(data);
@@ -171,7 +173,7 @@ public class ChartUtils {
             }
         };
         chart.getAxisLeft().setValueFormatter(formatter);
-        chart.animateY(2000);
+        chart.animateY(1500);
 
         chart.setData(data);
         chart.invalidate();
