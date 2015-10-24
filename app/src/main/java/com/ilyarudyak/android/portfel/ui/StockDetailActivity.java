@@ -25,7 +25,6 @@ import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
-import com.ilyarudyak.android.portfel.data.PortfolioContract;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
@@ -176,13 +175,8 @@ public class StockDetailActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.action_delete_stock) {
-            PrefUtils.removeSymbol(this, this.getString(R.string.pref_market_symbols_stocks), mSymbol);
-            getContentResolver().delete(PortfolioContract.StockTable.CONTENT_URI,
-                    PortfolioContract.StockTable.SYMBOL + " = '" + mSymbol + "'", null);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            return true;
+        if (id == R.id.action_settings) {
+            return false;
         }
 
         return super.onOptionsItemSelected(item);

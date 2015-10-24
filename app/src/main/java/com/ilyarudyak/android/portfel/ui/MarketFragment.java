@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -243,7 +244,8 @@ public class MarketFragment extends Fragment implements
             }
         }
     }
-    public class StockViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class StockViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener, View.OnLongClickListener {
 
         private Context context;
 
@@ -265,6 +267,7 @@ public class MarketFragment extends Fragment implements
             changePercentTextView = (TextView) itemView.findViewById(R.id.list_item_market_change_percent);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         // if we work with index - get it's name from predefined list
@@ -320,19 +323,53 @@ public class MarketFragment extends Fragment implements
         @Override
         public void onClick(View itemView) {
             Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
-
-            // set listener only for stocks (not indices)
-            int index;
-            int adapterPosition = getAdapterPosition();
-            if (POSITION_HEADER_INDICES < adapterPosition && adapterPosition < mPositionHeaderStock) {
-                index = getAdapterPosition() - INDEX_POSITION_OFFSET;
-                detailIntent.putExtra(SYMBOL, mIndicesAndStocks.get(index).getSymbol());
-                startActivity(detailIntent);
-            } else if (adapterPosition > mPositionHeaderStock) {
-                index = getAdapterPosition() - ADDITIONAL_POSITIONS;
+            int index = getIndex(getAdapterPosition());
+            if (index != -1) {
                 detailIntent.putExtra(SYMBOL, mIndicesAndStocks.get(index).getSymbol());
                 startActivity(detailIntent);
             }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            makeSnackBar(context, v, getAdapterPosition());
+            return true;
+        }
+    }
+    private void makeSnackBar(final Context context, View v, int adapterPosition) {
+        String textStr = context.getString(R.string.market_snackbar_text);
+        String actionStr = context.getString(R.string.market_snackbar_action);
+        final String symbolStr = mIndicesAndStocks.get(getIndex(adapterPosition)).getSymbol();
+        Snackbar.make(v, textStr, Snackbar.LENGTH_LONG)
+                .setAction(actionStr, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String deleteTextStr;
+                        if (deleteSymbol(context, symbolStr) > 0) {
+                            deleteTextStr = String.format(context.getString(
+                                    R.string.market_snackbar_text_deleted), symbolStr);
+                        } else {
+                            deleteTextStr = String.format(context.getString(
+                                    R.string.market_snackbar_text_deleted_error), symbolStr);
+                        }
+                        Snackbar.make(v, deleteTextStr, Snackbar.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
+    }
+    private int deleteSymbol(Context context, String symbolStr) {
+        PrefUtils.removeSymbol(context, context.getString(
+                R.string.pref_market_symbols_stocks), symbolStr);
+        return context.getContentResolver().delete(PortfolioContract.StockTable.CONTENT_URI,
+                PortfolioContract.StockTable.SYMBOL + " = '" + symbolStr + "'", null);
+    }
+    private int getIndex(int adapterPosition) {
+        if (POSITION_HEADER_INDICES < adapterPosition && adapterPosition < mPositionHeaderStock) {
+            return adapterPosition - INDEX_POSITION_OFFSET;
+        } else if (adapterPosition > mPositionHeaderStock) {
+            return adapterPosition - ADDITIONAL_POSITIONS;
+        } else {
+            return -1;
         }
     }
 

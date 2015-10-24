@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_delete_stock) {
+        if (id == R.id.action_settings) {
             return true;
         }
 
