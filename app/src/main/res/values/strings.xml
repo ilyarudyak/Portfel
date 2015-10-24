@@ -20,6 +20,8 @@
     <!-- portfolio fragment -->
     <!-- header in recycler view -->
     <string name="portfolio_header_stocks">Portfolio Stocks</string>
+    <!-- chart description-->
+    <string name="portfolio_chart_description">Portfolio Value, \'000</string>
 
     <!-- stock detail activity-->
     <!-- headers in recycler view -->

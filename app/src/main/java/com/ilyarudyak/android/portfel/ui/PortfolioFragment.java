@@ -19,6 +19,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
+import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
 
@@ -52,19 +53,7 @@ public class PortfolioFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
-        new FetchStocksTask().execute(stockSymbols);
-        // we start service when: 1) alarm fires and 2) fragment started
-/*        if (savedInstanceState == null) {
-            refresh();
-        }*/
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -79,6 +68,13 @@ public class PortfolioFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
+        new FetchStocksTask().execute(stockSymbols);
     }
 
     // helper methods
@@ -128,7 +124,15 @@ public class PortfolioFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            Stock stock;
+            if (position == POSITION_CHART) {
+                ((ChartViewHolder) holder).bindModel();
+            } else if (position == POSITION_HEADER_STOCKS) {
+                ((HeaderViewHolder) holder).bindModel();
+            } else {
+                stock = mStocks.get(position - ADDITIONAL_POSITIONS);
+                ((StockViewHolder) holder).bindModel(stock);
+            }
         }
 
         @Override
@@ -160,7 +164,11 @@ public class PortfolioFragment extends Fragment {
         }
 
         public void bindModel() {
-            portfolioBarChart = new BarChart(context);
+            try {
+                ChartUtils.buildBarChart(context, portfolioBarChart);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     private static class HeaderViewHolder extends RecyclerView.ViewHolder {
