@@ -278,7 +278,8 @@ public class MarketFragment extends Fragment implements
             } else if (symbol.equals(getActivity().getResources().getString(R.string.index_symbol_nyse_amex))) {
                 predefinedName = getActivity().getResources().getString(R.string.index_symbol_nyse_amex_name);
             } else {
-                throw new IllegalArgumentException("unknown symbol");
+                // if we don't have predefined name just use symbol
+                return stock.getSymbol();
             }
             return predefinedName;
         }
@@ -321,9 +322,14 @@ public class MarketFragment extends Fragment implements
             Intent detailIntent = new Intent(getActivity(), StockDetailActivity.class);
 
             // set listener only for stocks (not indices)
+            int index;
             int adapterPosition = getAdapterPosition();
-            if (adapterPosition > mPositionHeaderStock) {
-                int index = getAdapterPosition() - ADDITIONAL_POSITIONS;
+            if (POSITION_HEADER_INDICES < adapterPosition && adapterPosition < mPositionHeaderStock) {
+                index = getAdapterPosition() - INDEX_POSITION_OFFSET;
+                detailIntent.putExtra(SYMBOL, mIndicesAndStocks.get(index).getSymbol());
+                startActivity(detailIntent);
+            } else if (adapterPosition > mPositionHeaderStock) {
+                index = getAdapterPosition() - ADDITIONAL_POSITIONS;
                 detailIntent.putExtra(SYMBOL, mIndicesAndStocks.get(index).getSymbol());
                 startActivity(detailIntent);
             }

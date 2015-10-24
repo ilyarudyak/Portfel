@@ -22,6 +22,7 @@ import com.einmalfel.earl.EarlParser;
 import com.einmalfel.earl.Feed;
 import com.einmalfel.earl.Item;
 import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.data.PortfolioContract;
@@ -57,6 +58,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
     // get from intent
     private String mSymbol;
+    private boolean mIsIndex = false;
 
     // get from async tasks
     private Stock mStock;
@@ -196,6 +198,9 @@ public class StockDetailActivity extends AppCompatActivity {
         protected Void doInBackground(Void... ignore) {
             mSymbol = getIntent().getStringExtra(MarketFragment.SYMBOL);
             Log.d(TAG, "symbol=" + mSymbol);
+            if (PrefUtils.isIndex(StockDetailActivity.this, mSymbol)) {
+                mIsIndex = true;
+            }
             try {
                 mStock = YahooFinance.get(mSymbol, true);
             } catch (IOException e) {
@@ -245,8 +250,14 @@ public class StockDetailActivity extends AppCompatActivity {
             View view;
             switch (viewType) {
                 case R.id.view_holder_chart:
-                    view = StockDetailActivity.this.getLayoutInflater().inflate(
-                            R.layout.list_item_stock_detail_candlestick_chart, parent, false);
+                    if (!mIsIndex) {
+                        view = StockDetailActivity.this.getLayoutInflater().inflate(
+                                R.layout.list_item_stock_detail_candlestick_chart, parent, false);
+
+                    } else {
+                        view = StockDetailActivity.this.getLayoutInflater().inflate(
+                                R.layout.list_item_market_line_chart, parent, false);
+                    }
                     return new ChartViewHolder(view);
                 case R.id.view_holder_header:
                     view = StockDetailActivity.this.getLayoutInflater().inflate(
@@ -291,16 +302,25 @@ public class StockDetailActivity extends AppCompatActivity {
     public class ChartViewHolder extends RecyclerView.ViewHolder {
 
         private CandleStickChart candleStickChart;
+        private LineChart lineChart;
 
         public ChartViewHolder(View view) {
             super(view);
-            candleStickChart = (CandleStickChart) view.findViewById(R.id.stock_detail_list_item_candlestick_chart);
+            if (!mIsIndex) {
+                candleStickChart = (CandleStickChart) view.findViewById(R.id.stock_detail_list_item_candlestick_chart);
+            } else {
+                lineChart = (LineChart) view.findViewById(R.id.market_list_item_line_chart);
+            }
         }
 
         public void bindModel() {
             try {
                 if (mStock != null) {
-                    ChartUtils.buildCandleStickChart(StockDetailActivity.this, candleStickChart, mStock);
+                    if (!mIsIndex) {
+                        ChartUtils.buildCandleStickChart(StockDetailActivity.this, candleStickChart, mStock);
+                    } else {
+                        ChartUtils.buildLineChart(StockDetailActivity.this, lineChart, mStock);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
