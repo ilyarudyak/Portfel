@@ -307,7 +307,8 @@ public class StockDetailActivity extends AppCompatActivity {
         public ChartViewHolder(View view) {
             super(view);
             if (!mIsIndex) {
-                candleStickChart = (CandleStickChart) view.findViewById(R.id.stock_detail_list_item_candlestick_chart);
+                candleStickChart = (CandleStickChart) view.findViewById(
+                        R.id.stock_detail_list_item_candlestick_chart);
             } else {
                 lineChart = (LineChart) view.findViewById(R.id.market_list_item_line_chart);
             }
@@ -317,7 +318,8 @@ public class StockDetailActivity extends AppCompatActivity {
             try {
                 if (mStock != null) {
                     if (!mIsIndex) {
-                        ChartUtils.buildCandleStickChart(StockDetailActivity.this, candleStickChart, mStock);
+                        ChartUtils.buildCandleStickChart(StockDetailActivity.this,
+                                candleStickChart, mStock);
                     } else {
                         ChartUtils.buildLineChart(StockDetailActivity.this, lineChart, mStock);
                     }
@@ -374,6 +376,12 @@ public class StockDetailActivity extends AppCompatActivity {
                 Item item = mFeed.getItems().get(getAdapterPosition() - ADDITIONAL_POSITIONS);
 
                 String title = item.getTitle();
+                // if no specific for a company RSS feed found - replace error message with
+                // something more appropriate for a user
+                if (title != null && title.contains(StockDetailActivity.this.getString(
+                        R.string.stock_detail_no_rss_error))) {
+                    title = StockDetailActivity.this.getString(R.string.stock_detail_no_rss_handler);
+                }
                 titleTextView.setText(title);
 
                 String urlStr = item.getImageLink();
@@ -399,6 +407,8 @@ public class StockDetailActivity extends AppCompatActivity {
                         clockImageView.setVisibility(View.VISIBLE);
                         dateTextView.setText(dateStr);
                     }
+                } else {
+                    clockImageView.setVisibility(View.GONE);
                 }
             }
         }

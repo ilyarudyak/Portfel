@@ -28,6 +28,9 @@
     <string name="stock_detail_header_news">Company News</string>
     <!-- delete stock action in options menu-->
     <string name="action_delete_stock">Delete</string>
+    <!-- no rss feed error handlers-->
+    <string name="stock_detail_no_rss_error">RSS feed not found</string>
+    <string name="stock_detail_no_rss_handler">There is no Headlines data available.</string>
 
     <!-- stock widget -->
     <string name="widget_stock_title">Stock Quote</string>
