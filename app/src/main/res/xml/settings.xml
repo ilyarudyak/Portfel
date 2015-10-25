@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
+
+    <ListPreference
+        android:key="@string/settings_refreshing_key"
+        android:title="@string/settings_refreshing_title"
+        android:summary="%s"
+        android:entries="@array/settings_refreshing_entries"
+        android:entryValues="@array/settings_refreshing_values"
+        android:defaultValue="12"/>
+
+    <CheckBoxPreference
+        android:key="@string/settings_notifications_key"
+        android:title="@string/settings_notifications_title"
+        android:summaryOn="@string/settings_notifications_summary_enabled"
+        android:summaryOff="@string/settings_notifications_summary_disabled"
+        android:defaultValue="true" />
 
 </PreferenceScreen>

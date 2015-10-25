@@ -70,7 +70,19 @@
     <string name="a11y_widget_stock_chart">Chart of stock price</string>
 
     <!-- settings -->
-    <string name="activity_settings_label">Settings</string>
-    <string name="action_settings">Settings</string>
+    <string name="settings_activity_label">Settings</string>
+    <string name="settings_action">Settings</string>
+    <!-- setting: data refreshing -->
+    <string name="settings_refreshing_key">refreshing_key</string>
+    <string name="settings_refreshing_title">Data Refreshing</string>
+    <string name="settings_refreshing_entries_INTERVAL_HOUR">Every Hour</string>
+    <string name="settings_refreshing_entries_INTERVAL_HALF_DAY">Every 12 Hours</string>
+    <string name="settings_refreshing_entries_INTERVAL_DAY">Every Day</string>
+    <!-- setting: notifications -->
+    <string name="settings_notifications_key">notifications_key</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_summary_enabled">Enabled</string>
+    <string name="settings_notifications_summary_disabled">Disabled</string>
+
 
 </resources>
