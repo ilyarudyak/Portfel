@@ -2,6 +2,7 @@ package com.ilyarudyak.android.portfel.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         setToolbar();
         setViewPager();
         setTabLayout();
+
+        // set up default values
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         MarketUpdateService.setServiceAlarm(this);
     }

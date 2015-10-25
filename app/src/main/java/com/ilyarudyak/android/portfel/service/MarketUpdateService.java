@@ -28,6 +28,7 @@ import com.ilyarudyak.android.portfel.ui.MainActivity;
 import com.ilyarudyak.android.portfel.utils.DataUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
 import com.ilyarudyak.android.portfel.utils.PrefUtils;
+import com.ilyarudyak.android.portfel.utils.SettingsUtils;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -49,7 +50,6 @@ import yahoofinance.YahooFinance;
 public class MarketUpdateService extends IntentService {
 
     public static final String TAG = MarketUpdateService.class.getSimpleName();
-    private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_DAY;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int NOTIFY_ID = 1337;
 
@@ -64,10 +64,11 @@ public class MarketUpdateService extends IntentService {
 
         Intent i = newIntent(context);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+        long pollInterval = SettingsUtils.getAlarmInterval(context);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), POLL_INTERVAL, pi);
+                SystemClock.elapsedRealtime(), pollInterval, pi);
     }
 
     public static Intent newIntent(Context context) {
@@ -168,12 +169,21 @@ public class MarketUpdateService extends IntentService {
         }
         return feed;
     }
+    /**
+     * We check if 2 conditions are met:
+     * 1) notifications set in preference;
+     * 2) time elapsed form the last notification is bigger than given threshold;
+     * */
     private boolean isNotify() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String lastNotificationKey = this.getString(R.string.pref_last_notification);
-        long lastSync = prefs.getLong(lastNotificationKey, 0);
-        // check if time elapsed since last notification is more than 1 day
-        return System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS;
+        if (SettingsUtils.isNotificationsSet(this)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String lastNotificationKey = this.getString(R.string.pref_last_notification);
+            long lastSync = prefs.getLong(lastNotificationKey, 0);
+            // check if time elapsed since last notification is more than 1 day
+            return System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS;
+        } else {
+            return false;
+        }
     }
     private Notification buildNotification(Item rssItem) {
 
