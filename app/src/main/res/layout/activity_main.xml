@@ -32,7 +32,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/wall_street_nyse"
             app:layout_collapseMode="parallax"
-
+            android:contentDescription="@string/a11y_activity_main_toolbar_image"
             />
 
         <android.support.v7.widget.Toolbar

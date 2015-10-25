@@ -67,7 +67,14 @@
     <string name="pref_portfolio_stocks">portfolio_stocks</string>
 
     <!-- a11y -->
-    <string name="a11y_widget_stock_chart">Chart of stock price</string>
+    <string name="a11y_widget_stock_chart">Chart of Stock Price</string>
+    <string name="a11y_activity_main_toolbar_image">NYSE Night View</string>
+    <string name="a11y_activity_stock_detail_toolbar_icon">Change Icon</string>
+    <string name="a11y_market_dialog_add_stock_symbol">Enter Stock Symbol</string>
+    <string name="a11y_list_item_market_change_icon">Change Icon</string>
+    <string name="a11y_list_item_news_image_view">News Image</string>
+    <string name="a11y_list_item_news_clock_icon">Clock Icon</string>
+    <string name="a11y_widget_stock_change_icon">Change Icon</string>
 
     <!-- settings -->
     <string name="settings_activity_label">Settings</string>

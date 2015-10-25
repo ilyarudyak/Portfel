@@ -65,16 +65,14 @@ public class StockDetailActivity extends AppCompatActivity {
     private Feed mFeed;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        new FetchStockHistory().execute();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_detail);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        if (savedInstanceState == null) {
+            new FetchStockHistory().execute();
+        }
     }
 
     // helper methods

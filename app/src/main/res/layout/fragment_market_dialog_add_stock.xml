@@ -9,13 +9,15 @@
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/market_dialog_add_stock_label"/>
+			android:text="@string/market_dialog_add_stock_label"
+            android:labelFor="@+id/market_dialog_add_stock_symbol"/>
 
 		<EditText
-			android:id="@+id/market_dialog_add_stock_symbol"
+			android:id="@id/market_dialog_add_stock_symbol"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:inputType="text"
+			android:contentDescription="@string/a11y_market_dialog_add_stock_symbol"
 			/>
 
 </LinearLayout>
