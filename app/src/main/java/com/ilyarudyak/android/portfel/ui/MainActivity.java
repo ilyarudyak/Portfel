@@ -1,5 +1,6 @@
 package com.ilyarudyak.android.portfel.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -12,6 +13,7 @@ import android.view.View;
 
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
+import com.ilyarudyak.android.portfel.settings.SettingsActivity;
 import com.ilyarudyak.android.portfel.ui.adapter.ViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -86,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // --------------------- options menu ---------------------
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -98,15 +102,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 }
 
 

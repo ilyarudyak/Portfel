@@ -70,6 +70,7 @@
     <string name="a11y_widget_stock_chart">Chart of stock price</string>
 
     <!-- settings -->
+    <string name="activity_settings_label">Settings</string>
     <string name="action_settings">Settings</string>
 
 </resources>
