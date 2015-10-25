@@ -10,7 +10,9 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Portfel" >
+        android:theme="@style/Theme.Portfel"
+        android:supportsRtl="true"
+        >
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
