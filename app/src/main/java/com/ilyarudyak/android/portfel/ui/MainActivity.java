@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ilyarudyak.android.portfel.R;
+import com.ilyarudyak.android.portfel.analytics.PortfelApplication;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.settings.SettingsActivity;
 import com.ilyarudyak.android.portfel.ui.adapter.ViewPagerAdapter;
@@ -39,7 +40,11 @@ public class MainActivity extends AppCompatActivity {
         // set up default values
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
+        // set up alarm for update service
         MarketUpdateService.setServiceAlarm(this);
+
+        // start tracking for google analytics
+        ((PortfelApplication) getApplication()).startTracking();
     }
 
     // helper methods
