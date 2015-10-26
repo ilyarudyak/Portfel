@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,6 +39,9 @@ public class NewsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private Feed mFeed;
 
+    // on a tablet we use cards and gridlayout for RecyclerView
+    private int mColumnNumber;
+
     public static NewsFragment newInstance() {
         NewsFragment pf = new NewsFragment();
         return pf;
@@ -56,19 +60,26 @@ public class NewsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
+        // get column number
+        mColumnNumber = getResources().getInteger(R.integer.column_number);
+
         return view;
     }
 
     // helper methods
     private void setRecyclerView() {
+        if (mColumnNumber == 1) {
+            // set layout manager
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(llm);
 
-        // set layout manager
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(llm);
-
-        // set divider
-        Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
-        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+            // set divider
+            Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
+            mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+        } else {
+            GridLayoutManager glm = new GridLayoutManager(getActivity(), mColumnNumber);
+            mRecyclerView.setLayoutManager(glm);
+        }
 
         // set adapter
         NewsFeedAdapter articleAdapter = new NewsFeedAdapter();

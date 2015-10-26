@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="4dp"
+    android:background="@color/primary_semi_light">
+    <!-- in tablet layout we use cards -->
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="2dp"
+        >
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="@color/primary_light"
+            >
+
+            <ImageView
+                android:id="@+id/list_item_news_image_view"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/a11y_list_item_news_image_view" />
+
+            <TextView
+                android:id="@+id/list_item_news_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/list_item_news_image_view"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/primary_dark"
+                android:layout_marginStart="16dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+
+                />
+
+            <ImageView
+                android:id="@+id/list_item_news_clock_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/list_item_news_image_view"
+                android:layout_below="@id/list_item_news_title"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_alarm_black_18dp"
+                android:scaleX="0.67"
+                android:scaleY="0.67"
+                android:tint="@color/primary_semi_light"
+                android:contentDescription="@string/a11y_list_item_news_clock_icon" />
+
+            <TextView
+                android:id="@+id/list_item_news_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/list_item_news_clock_icon"
+                android:layout_below="@id/list_item_news_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="12sp"
+                android:textColor="@color/primary_semi_light"
+                android:maxLines="1"
+                android:ellipsize="end"
+                />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>
+
+
+
+
+
+
+
+
+

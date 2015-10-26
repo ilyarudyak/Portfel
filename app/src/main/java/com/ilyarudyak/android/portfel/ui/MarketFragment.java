@@ -330,6 +330,8 @@ public class MarketFragment extends Fragment implements
             return true;
         }
     }
+
+    // helper methods
     private void makeSnackBar(final Context context, View v, int adapterPosition) {
         String textStr = context.getString(R.string.market_snackbar_text);
         String actionStr = context.getString(R.string.market_snackbar_action);
