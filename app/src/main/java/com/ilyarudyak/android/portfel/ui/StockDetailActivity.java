@@ -246,6 +246,7 @@ public class StockDetailActivity extends AppCompatActivity {
             }
 
             setToolbar();
+            setShareFab();
         }
     }
     private class FetchNewsFeed extends AsyncTask<URL, Void, Void> {
