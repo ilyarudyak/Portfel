@@ -46,8 +46,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.android.support:gridlayout-v7:23.1.0'
 
-    // compile 'com.einmalfel:earl:1.0.0'
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    // we use it to fetch images from rss feed
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     // we use this library to get quotes from yahoo

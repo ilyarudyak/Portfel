@@ -63,7 +63,7 @@ public class MarketFragment extends Fragment implements
      * */
     private static final int POSITION_CHART = 0;
     private static final int POSITION_HEADER_INDICES = 1;
-    // 2 = 1 position for image + 1position for  indices header
+    // 2 = 1 position for image + 1 position for  indices header
     private static final int INDEX_POSITION_OFFSET = 2;
     // 3 = 1 position for image + 2 positions for headers
     private static final int ADDITIONAL_POSITIONS = 3;
@@ -336,7 +336,7 @@ public class MarketFragment extends Fragment implements
         String textStr = context.getString(R.string.market_snackbar_text);
         String actionStr = context.getString(R.string.market_snackbar_action);
         final String symbolStr = mIndicesAndStocks.get(getIndex(adapterPosition)).getSymbol();
-        Snackbar.make(v, textStr, Snackbar.LENGTH_LONG)
+        Snackbar snackbar = Snackbar.make(v, textStr, Snackbar.LENGTH_LONG)
                 .setAction(actionStr, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -350,8 +350,9 @@ public class MarketFragment extends Fragment implements
                         }
                         Snackbar.make(v, deleteTextStr, Snackbar.LENGTH_SHORT).show();
                     }
-                })
-                .show();
+                });
+        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.primary));
+        snackbar.show();
     }
     private int deleteSymbol(Context context, String symbolStr) {
         PrefUtils.removeSymbol(context, context.getString(

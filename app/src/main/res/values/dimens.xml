@@ -1,4 +1,4 @@
 <resources>
     <!-- column number for RecyclerView -->
-    <integer name="column_number">2</integer>
+    <integer name="column_number">1</integer>
 </resources>
