@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ga_trackingId">UA-69294651-1</string>
-    <string name="ga_autoActivityTracking">true</string>
+    <boolean name="ga_autoActivityTracking">true</boolean>
+
+    <screenName name="com.ilyarudyak.android.portfel.ui.MainActivity">
+        Main screen
+    </screenName>
+    <screenName name="com.ilyarudyak.android.portfel.ui.StockDetailActivity">
+        Stock Detail screen
+    </screenName>
 </resources>

@@ -3,6 +3,7 @@ package com.ilyarudyak.android.portfel.analytics;
 import android.app.Application;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.ilyarudyak.android.portfel.R;
 
@@ -18,6 +19,7 @@ public class PortfelApplication extends Application {
             GoogleAnalytics ga = GoogleAnalytics.getInstance(this);
             mTracker = ga.newTracker(R.xml.track_app);
             ga.enableAutoActivityReports(this);
+            ga.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
         }
     }
 
