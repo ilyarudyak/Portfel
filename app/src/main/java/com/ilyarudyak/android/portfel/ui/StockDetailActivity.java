@@ -1,5 +1,6 @@
 package com.ilyarudyak.android.portfel.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -24,7 +25,6 @@ import com.einmalfel.earl.Item;
 import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.ilyarudyak.android.portfel.R;
-import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.settings.SettingsActivity;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.ChartUtils;
@@ -36,7 +36,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Locale;
@@ -71,7 +70,7 @@ public class StockDetailActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         if (savedInstanceState == null) {
-            new FetchStockHistory().execute();
+            new FetchNewsFeed().execute();
         }
     }
 
@@ -188,15 +187,29 @@ public class StockDetailActivity extends AppCompatActivity {
 
         private final String TAG = FetchStockHistory.class.getSimpleName();
 
+        private Context context;
+        private LineChart lineChart;
+        private CandleStickChart candleStickChart;
+
+        public FetchStockHistory(Context context, CandleStickChart candleStickChart,  LineChart lineChart) {
+            this.candleStickChart = candleStickChart;
+            this.context = context;
+            this.lineChart = lineChart;
+        }
+
         @Override
         protected Void doInBackground(Void... ignore) {
+            // get info from intent
             mSymbol = getIntent().getStringExtra(MarketFragment.SYMBOL);
             Log.d(TAG, "symbol=" + mSymbol);
             if (PrefUtils.isIndex(StockDetailActivity.this, mSymbol)) {
                 mIsIndex = true;
             }
+
+            // fetch history
             try {
                 mStock = YahooFinance.get(mSymbol, true);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -205,11 +218,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void ignore) {
-            try {
-                new FetchNewsFeed().execute(Config.getCompanyNewsUrl(mSymbol));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+
         }
     }
     private class FetchNewsFeed extends AsyncTask<URL, Void, Void> {
@@ -390,7 +399,6 @@ public class StockDetailActivity extends AppCompatActivity {
                 Date date = item.getPublicationDate();
                 if (date != null) {
                     String dateStr = MiscUtils.getTimeAgo(date.getTime());
-                    Log.d(TAG, "date=" + dateStr);
                     if (dateStr == null) {
                         // we don't show clock icon if no time provided
                         clockImageView.setVisibility(View.GONE);

@@ -6,10 +6,16 @@ import android.net.ConnectivityManager;
 
 import com.ilyarudyak.android.portfel.R;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+
+import yahoofinance.Stock;
+import yahoofinance.histquotes.HistoricalQuote;
 
 /**
  * Created by ilyarudyak on 10/1/15.
@@ -130,5 +136,20 @@ public class MiscUtils {
         styledAttributes.recycle();
 
         return toolbarHeight;
+    }
+
+    // ---------------- stock manipulation -------------
+
+    /**
+     * Reverse history of a stock.
+     * */
+    public static void reverseHistory(Stock stock) {
+        try {
+            List<HistoricalQuote> history = stock.getHistory();
+            Collections.reverse(history);
+            stock.setHistory(history);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

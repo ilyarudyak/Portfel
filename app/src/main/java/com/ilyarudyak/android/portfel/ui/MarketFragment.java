@@ -220,7 +220,15 @@ public class MarketFragment extends Fragment implements
         }
 
         public void bindModel() {
-            new FetchIndexHistory(context, indexLineChart).execute();
+            if (mIndexSnP500 == null) {
+                new FetchIndexHistory(context, indexLineChart).execute();
+            } else {
+                try {
+                    ChartUtils.buildLineChart(context, indexLineChart, mIndexSnP500);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -395,9 +403,14 @@ public class MarketFragment extends Fragment implements
         @Override
         protected Void doInBackground(Void... ignore) {
             try {
+
                 // this is the only place where we use context - to get string resources
                 String snp500Str = context.getResources().getString(R.string.index_symbol_sp500);
                 mIndexSnP500 = YahooFinance.get(snp500Str, true);
+
+                // reverse history
+                MiscUtils.reverseHistory(mIndexSnP500);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -409,7 +422,6 @@ public class MarketFragment extends Fragment implements
             try {
                 if (mIndexSnP500 != null) {
                     ChartUtils.buildLineChart(context, lineChart, mIndexSnP500);
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();

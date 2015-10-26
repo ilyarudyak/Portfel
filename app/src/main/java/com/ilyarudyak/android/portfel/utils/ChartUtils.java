@@ -52,11 +52,14 @@ public class ChartUtils {
 
     public static void buildLineChart(Context context, LineChart chart, Stock stock) throws IOException {
 
+        Log.d(TAG, "i'm going to build line chart...");
+
         // get historical data from stock
         List<HistoricalQuote> history = stock.getHistory();
         
         // we have to reverse list - original list goes from recent to old items
-        Collections.reverse(history);
+/*        Log.d(TAG, "reversing history...");
+        Collections.reverse(history);*/
 
         // set x axis values
         ArrayList<String> xVals = new ArrayList<>();
@@ -86,7 +89,7 @@ public class ChartUtils {
 
         // set chart properties
         setChartProperties(context, chart, stock);
-        chart.animateX(1500);
+//        chart.animateX(1500);
 
         // set data on chart
         chart.setData(data);
