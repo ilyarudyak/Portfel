@@ -91,5 +91,8 @@
     <string name="settings_notifications_summary_enabled">Enabled</string>
     <string name="settings_notifications_summary_disabled">Disabled</string>
 
+    <!-- add id number -->
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
 
 </resources>

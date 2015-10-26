@@ -23,6 +23,8 @@ import com.einmalfel.earl.Feed;
 import com.einmalfel.earl.Item;
 import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.ilyarudyak.android.portfel.R;
 import com.ilyarudyak.android.portfel.api.Config;
 import com.ilyarudyak.android.portfel.settings.SettingsActivity;
@@ -55,6 +57,7 @@ public class StockDetailActivity extends AppCompatActivity {
     private static final int ADDITIONAL_POSITIONS = 2;
 
     private RecyclerView mRecyclerView;
+    private AdView mAdView;
 
     // get from intent
     private String mSymbol;
@@ -69,6 +72,9 @@ public class StockDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_detail);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        setBannerAd();
 
         // get info from intent
         mSymbol = getIntent().getStringExtra(MarketFragment.SYMBOL);
@@ -169,6 +175,12 @@ public class StockDetailActivity extends AppCompatActivity {
         i.setType("text/plain");
         i.putExtra(Intent.EXTRA_TEXT, message);
         startActivity(i);
+    }
+    private void setBannerAd() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     // ------------------ options menu -------------------------
