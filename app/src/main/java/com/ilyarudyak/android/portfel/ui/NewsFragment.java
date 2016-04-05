@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +37,7 @@ public class NewsFragment extends Fragment {
     public static final String TAG = NewsFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private Feed mFeed;
 
     // on a tablet we use cards and gridlayout for RecyclerView
@@ -50,7 +51,7 @@ public class NewsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        new FetchNewsFeed().execute(Config.NEWS_URL);
+        fetchData();
     }
 
     @Override
@@ -63,10 +64,22 @@ public class NewsFragment extends Fragment {
         // get column number
         mColumnNumber = getResources().getInteger(R.integer.column_number);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchData();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         return view;
     }
 
     // helper methods
+    private void fetchData() {
+        new FetchNewsFeed().execute(Config.NEWS_URL);
+    }
     private void setRecyclerView() {
         if (mColumnNumber == 1) {
             // set layout manager
@@ -82,8 +95,7 @@ public class NewsFragment extends Fragment {
         }
 
         // set adapter
-        NewsFeedAdapter articleAdapter = new NewsFeedAdapter();
-        mRecyclerView.setAdapter(articleAdapter);
+        mRecyclerView.setAdapter(new NewsFeedAdapter());
     }
 
     // ------------------- AsyncTask class -----------------
@@ -130,9 +142,12 @@ public class NewsFragment extends Fragment {
             Item item = mFeed.getItems().get(position);
 
             String title = item.getTitle();
-            holder.titleTextView.setText(title);
+            if (title != null) {
+                holder.titleTextView.setText(title);
+            }
 
             String urlStr = item.getImageLink();
+//            Log.d(TAG, "title=" + title.substring(0, 10) + " urlStr=" + urlStr);
             if (urlStr != null) {
                 Picasso.with(getActivity())
                         .load(urlStr)
@@ -144,7 +159,7 @@ public class NewsFragment extends Fragment {
             Date date = item.getPublicationDate();
             if (date != null) {
                 String dateStr = MiscUtils.getTimeAgo(date.getTime());
-                Log.d(TAG, "date=" + dateStr);
+//                Log.d(TAG, "date=" + dateStr);
                 if (dateStr == null) {
                     // we don't show clock icon if no time provided
                     holder.clockImageView.setVisibility(View.GONE);
