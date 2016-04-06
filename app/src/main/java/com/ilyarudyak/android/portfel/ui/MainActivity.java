@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         // set up alarm for update service
-        MarketUpdateService.setServiceAlarm(this);
+        MarketUpdateService.setServiceAlarm(this, false);
 
         // start tracking for google analytics
         ((PortfelApplication) getApplication()).startTracking();

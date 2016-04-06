@@ -58,17 +58,26 @@ public class MarketUpdateService extends IntentService {
 
     }
 
-    public static void setServiceAlarm(Context context) {
+    public static void setServiceAlarm(Context context, boolean alarmOnBoot) {
 
         Log.d(TAG, "setting alarm...");
 
-        Intent i = newIntent(context);
-        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
-        long pollInterval = SettingsUtils.getAlarmInterval(context);
+        PendingIntent alarmIntent = PendingIntent.getService(context, 0, newIntent(context), 0);
+
+        // get interval in milliseconds between subsequent repeats of the alarm (from settings)
+        // we use this method in 2 places: a) on boot we need to fire alarm immediately;
+        // b) on start of main activity we don't need this - we start service manually (see below)
+        long alarmInterval = alarmOnBoot ? 0 : SettingsUtils.getAlarmInterval(context);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), pollInterval, pi);
+
+        // we use inexact repeating, so we must manually call service in onCreate()
+        // otherwise we'll get time delay on first installation of the app
+        alarmManager.setInexactRepeating(
+                AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + alarmInterval,
+                alarmInterval,
+                alarmIntent);
     }
 
     public static Intent newIntent(Context context) {
@@ -78,7 +87,7 @@ public class MarketUpdateService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Log.d(TAG, "starting service...");
+        Log.d(TAG, "starting service - onHandleIntent() starting ...");
 
         // fetch data only if network is available
         if (!MiscUtils.isNetworkAvailableAndConnected(this)) {
@@ -88,7 +97,6 @@ public class MarketUpdateService extends IntentService {
         // notify about company that user choose in prefs
         notifyCompanyNews();
 
-        Log.d(TAG, "network is available...");
         ArrayList<ContentProviderOperation> cpo = new ArrayList<>();
 
         Uri dirStockUri = PortfolioContract.StockTable.CONTENT_URI;
@@ -111,7 +119,7 @@ public class MarketUpdateService extends IntentService {
         } catch (RemoteException | OperationApplicationException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "inserting data into db DONE");
+        Log.d(TAG, "inserting data into db DONE - onHandleIntent() done");
     }
 
     // helper methods
@@ -127,7 +135,6 @@ public class MarketUpdateService extends IntentService {
     private void addToBatch(ArrayList<ContentProviderOperation> cpo,
                             Map<String, Stock> symbolsMap, Uri uri) {
         if (symbolsMap != null) {
-            Log.d(TAG, "inserting data into db...");
             for (Stock stock: symbolsMap.values()) {
                 ContentValues valuesStock = DataUtils.buildContentValues(stock);
                 cpo.add(ContentProviderOperation.newInsert(uri).withValues(valuesStock).build());

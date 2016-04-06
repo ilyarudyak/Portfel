@@ -21,7 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         Log.i(TAG, "Received broadcast intent: " + intent.getAction());
-        MarketUpdateService.setServiceAlarm(context);
+        MarketUpdateService.setServiceAlarm(context, true);
     }
 
 }

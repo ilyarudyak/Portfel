@@ -56,7 +56,7 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.4'
 
     // we use AdMob and analytics
-    compile 'com.google.android.gms:play-services:8.1.0'
+    compile 'com.google.android.gms:play-services:8.4.0'
 }
 
 

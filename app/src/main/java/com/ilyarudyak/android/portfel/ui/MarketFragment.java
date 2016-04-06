@@ -85,8 +85,9 @@ public class MarketFragment extends Fragment implements
                 getActivity().getString(R.string.pref_market_symbols_stocks)));
         mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
 
-        // we start service when: 1) alarm fires and 2) fragment started
+        // we start service manually instead of using alarm - see comments in service
         if (savedInstanceState == null) {
+            Log.d(TAG, "calling service from onCreate() ... ");
             fetchDataWithService();
         }
     }
@@ -121,6 +122,8 @@ public class MarketFragment extends Fragment implements
         // set divider
         Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+
+        Log.d(TAG, "setupRecyclerView() done");
     }
     private void setupAdapter() {
         if (isAdded()) {
@@ -439,9 +442,7 @@ public class MarketFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d(TAG, "onLoadFinished() is called...");
         if (cursor != null && cursor.getCount() > 0) {
-            Log.d(TAG, "cursor is not null and count > 0");
             mIndicesAndStocks = DataUtils.buildStockList(cursor);
             setupAdapter();
         }

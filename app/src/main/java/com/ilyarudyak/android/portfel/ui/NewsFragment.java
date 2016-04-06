@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,7 @@ public class NewsFragment extends Fragment {
 
     // helper methods
     private void fetchDataWithAsyncTask() {
+        Log.d(TAG, "fetching data...");
         new FetchNewsFeed().execute(Config.NEWS_URL);
     }
     private void setupRecyclerView() {
@@ -165,7 +167,6 @@ public class NewsFragment extends Fragment {
             Date date = item.getPublicationDate();
             if (date != null) {
                 String dateStr = MiscUtils.getTimeAgo(date.getTime());
-//                Log.d(TAG, "date=" + dateStr);
                 if (dateStr == null) {
                     // we don't show clock icon if no time provided
                     holder.clockImageView.setVisibility(View.GONE);
