@@ -14,7 +14,8 @@ public class Config {
     public static final URL SP500_URL;
     public static final URL REUTERS_URL;
 
-    public static final String COMPANY_NEWS_BASE_URL = "http://finance.yahoo.com/rss/headline";
+//    public static final String COMPANY_NEWS_BASE_URL = "http://finance.yahoo.com/rss/headline";
+    public static final String COMPANY_NEWS_BASE_URL = "https://feeds.finance.yahoo.com/rss/2.0/headline";
 
     static {
         URL urlNews = null;
@@ -39,6 +40,8 @@ public class Config {
         Uri builtUri = Uri.parse(COMPANY_NEWS_BASE_URL)
                 .buildUpon()
                 .appendQueryParameter("s", symbol)
+                .appendQueryParameter("region", "US")
+                .appendQueryParameter("lang", "en-US")
                 .build();
         return new URL(builtUri.toString());
     }

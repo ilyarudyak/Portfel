@@ -49,9 +49,11 @@ public class NewsFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        fetchData();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            fetchDataWithAsyncTask();
+        }
     }
 
     @Override
@@ -68,7 +70,7 @@ public class NewsFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchData();
+                fetchDataWithAsyncTask();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -77,7 +79,7 @@ public class NewsFragment extends Fragment {
     }
 
     // helper methods
-    private void fetchData() {
+    private void fetchDataWithAsyncTask() {
         new FetchNewsFeed().execute(Config.NEWS_URL);
     }
     private void setRecyclerView() {
@@ -97,6 +99,7 @@ public class NewsFragment extends Fragment {
         // set adapter
         mRecyclerView.setAdapter(new NewsFeedAdapter());
     }
+
 
     // ------------------- AsyncTask class -----------------
 

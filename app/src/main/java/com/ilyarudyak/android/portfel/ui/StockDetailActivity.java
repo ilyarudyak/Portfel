@@ -85,6 +85,7 @@ public class StockDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             try {
+                Log.d(TAG, "url=" + Config.getCompanyNewsUrl(mSymbol));
                 new FetchNewsFeed().execute(Config.getCompanyNewsUrl(mSymbol));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -259,7 +260,7 @@ public class StockDetailActivity extends AppCompatActivity {
                 inputStream = urls[0].openConnection().getInputStream();
                 mFeed = EarlParser.parseOrThrow(inputStream, 0);
             } catch (IOException | DataFormatException | XmlPullParserException e) {
-                e.printStackTrace();
+                Log.e(TAG, "something goes wrong...", e);
             }
 
             return null;

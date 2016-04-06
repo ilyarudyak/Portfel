@@ -87,7 +87,7 @@ public class MarketFragment extends Fragment implements
 
         // we start service when: 1) alarm fires and 2) fragment started
         if (savedInstanceState == null) {
-            refresh();
+            fetchDataWithService();
         }
     }
 
@@ -102,7 +102,7 @@ public class MarketFragment extends Fragment implements
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                fetchDataWithService();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -125,10 +125,11 @@ public class MarketFragment extends Fragment implements
             // set adapter
             MarketDataAdapter marketDataAdapter = new MarketDataAdapter();
             mRecyclerView.setAdapter(marketDataAdapter);
+
             Log.d(TAG, "setting recycler view DONE");
         }
     }
-    private void refresh() {
+    private void fetchDataWithService() {
         getActivity().startService(MarketUpdateService.newIntent(getActivity()));
     }
 

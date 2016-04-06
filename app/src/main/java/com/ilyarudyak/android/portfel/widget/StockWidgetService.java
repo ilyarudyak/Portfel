@@ -20,8 +20,6 @@ import yahoofinance.YahooFinance;
  * Widget has the same layout as list stock item. We fetch stock in
  * onHandleIntent() and then bind its data to remote views.
  *
- * We take symbol from preferences so a user can choose it.
- *
  * The only problem - we can not change color and rotation of an icon
  * programmatically so we simply supply different icons (green and
  * red - rotated on 180 degrees) for different sign of changes.

@@ -71,11 +71,14 @@ public class PortfolioFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
-        new FetchStocksTask().execute(stockSymbols);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (savedInstanceState == null) {
+            String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
+            new FetchStocksTask().execute(stockSymbols);
+        }
     }
+
 
     // helper methods
     private void setRecyclerView() {
