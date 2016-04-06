@@ -12,7 +12,7 @@
  * https://commonsware.com/Android
  */
 
-package com.ilyarudyak.android.portfel.ui;
+package com.ilyarudyak.android.portfel.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

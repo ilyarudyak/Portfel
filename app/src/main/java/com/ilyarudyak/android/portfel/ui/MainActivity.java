@@ -17,11 +17,14 @@ import com.ilyarudyak.android.portfel.analytics.PortfelApplication;
 import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.settings.SettingsActivity;
 import com.ilyarudyak.android.portfel.ui.adapter.ViewPagerAdapter;
+import com.ilyarudyak.android.portfel.ui.dialog.AddStockDialogFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int INDEX_OF_TAB_WITH_FAB = 0;
     private static final String DIALOG_FRAGMENT_TAG = "dialog_add_stock";
+
+
     private ViewPager mViewPager;
     private FloatingActionButton mFab;
 
@@ -55,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private void setViewPager() {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new ViewPagerAdapter(this, getFragmentManager()));
+
+        // set the number of pages that should be retained to either side of the current page
+        mViewPager.setOffscreenPageLimit(ViewPagerAdapter.NUMBER_OF_FRAGMENTS - 1);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
