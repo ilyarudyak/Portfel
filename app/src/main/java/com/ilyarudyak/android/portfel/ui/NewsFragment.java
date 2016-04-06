@@ -54,6 +54,9 @@ public class NewsFragment extends Fragment {
         if (savedInstanceState == null) {
             fetchDataWithAsyncTask();
         }
+
+        // get column number
+        mColumnNumber = getResources().getInteger(R.integer.column_number);
     }
 
     @Override
@@ -62,9 +65,7 @@ public class NewsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
-        // get column number
-        mColumnNumber = getResources().getInteger(R.integer.column_number);
+        setupRecyclerView();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -82,7 +83,7 @@ public class NewsFragment extends Fragment {
     private void fetchDataWithAsyncTask() {
         new FetchNewsFeed().execute(Config.NEWS_URL);
     }
-    private void setRecyclerView() {
+    private void setupRecyclerView() {
         if (mColumnNumber == 1) {
             // set layout manager
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -95,9 +96,11 @@ public class NewsFragment extends Fragment {
             GridLayoutManager glm = new GridLayoutManager(getActivity(), mColumnNumber);
             mRecyclerView.setLayoutManager(glm);
         }
-
-        // set adapter
-        mRecyclerView.setAdapter(new NewsFeedAdapter());
+    }
+    private void setupAdapter() {
+        if (isAdded()) {
+            mRecyclerView.setAdapter(new NewsFeedAdapter());
+        }
     }
 
 
@@ -115,14 +118,13 @@ public class NewsFragment extends Fragment {
             } catch (IOException | DataFormatException | XmlPullParserException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void ignore) {
-            if (mFeed != null) {
-                setRecyclerView();
+            if (mFeed != null && mRecyclerView != null) {
+                setupAdapter();
             }
         }
     }

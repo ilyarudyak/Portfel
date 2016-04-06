@@ -53,6 +53,15 @@ public class PortfolioFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
+            new FetchStocksTask().execute(stockSymbols);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
@@ -62,23 +71,13 @@ public class PortfolioFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                fetchDataWithService();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
         return view;
     }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState == null) {
-            String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
-            new FetchStocksTask().execute(stockSymbols);
-        }
-    }
-
 
     // helper methods
     private void setRecyclerView() {
@@ -96,7 +95,7 @@ public class PortfolioFragment extends Fragment {
             mRecyclerView.setAdapter(portfolioDataAdapter);
         }
     }
-    private void refresh() {
+    private void fetchDataWithService() {
         getActivity().startService(MarketUpdateService.newIntent(getActivity()));
     }
 

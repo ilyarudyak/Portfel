@@ -97,6 +97,7 @@ public class MarketFragment extends Fragment implements
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        setupRecyclerView();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -111,22 +112,19 @@ public class MarketFragment extends Fragment implements
     }
 
     // helper methods
-    private void setRecyclerView() {
-        Log.d(TAG, "setting recycler view...");
+    private void setupRecyclerView() {
+
+        // set layout manager
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(llm);
+
+        // set divider
+        Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
+        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+    }
+    private void setupAdapter() {
         if (mIndicesAndStocks != null && mIndicesAndStocks.size() > 0) {
-            // set layout manager
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-            mRecyclerView.setLayoutManager(llm);
-
-            // set divider
-            Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
-            mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
-
-            // set adapter
-            MarketDataAdapter marketDataAdapter = new MarketDataAdapter();
-            mRecyclerView.setAdapter(marketDataAdapter);
-
-            Log.d(TAG, "setting recycler view DONE");
+            mRecyclerView.setAdapter(new MarketDataAdapter());
         }
     }
     private void fetchDataWithService() {
@@ -443,7 +441,7 @@ public class MarketFragment extends Fragment implements
         if (cursor != null && cursor.getCount() > 0) {
             Log.d(TAG, "cursor is not null and count > 0");
             mIndicesAndStocks = DataUtils.buildStockList(cursor);
-            setRecyclerView();
+            setupAdapter();
         }
 
     }
