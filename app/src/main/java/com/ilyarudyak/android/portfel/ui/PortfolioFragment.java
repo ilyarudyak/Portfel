@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.ilyarudyak.android.portfel.R;
-import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.ui.divider.HorizontalDividerItemDecoration;
 import com.ilyarudyak.android.portfel.utils.ChartUtils;
 import com.ilyarudyak.android.portfel.utils.MiscUtils;
@@ -38,6 +37,7 @@ public class PortfolioFragment extends Fragment {
     private List<Stock> mStocks;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private String[] mStockSymbols;
 
     /**
      * these constants are used for recycler view with multiple parts:
@@ -55,9 +55,9 @@ public class PortfolioFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
         if (savedInstanceState == null) {
-            String[] stockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
-            new FetchStocksTask().execute(stockSymbols);
+            fetchDataWithAsyncTask();
         }
     }
 
@@ -66,12 +66,13 @@ public class PortfolioFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        setupRecyclerView();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchDataWithService();
+                fetchDataWithAsyncTask();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -80,23 +81,25 @@ public class PortfolioFragment extends Fragment {
     }
 
     // helper methods
-    private void setRecyclerView() {
-        if (mStocks != null && mStocks.size() > 0) {
-            // set layout manager
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-            mRecyclerView.setLayoutManager(llm);
+    private void setupRecyclerView() {
 
-            // set divider
-            Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
-            mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+        // set layout manager
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(llm);
 
-            // set adapter
-            PortfolioDataAdapter portfolioDataAdapter = new PortfolioDataAdapter();
-            mRecyclerView.setAdapter(portfolioDataAdapter);
+        // set divider
+        Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
+        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
+    }
+    private void setupAdapter() {
+        if (isAdded()){
+            if (mStocks != null && mStocks.size() > 0) {
+                mRecyclerView.setAdapter(new PortfolioDataAdapter());
+            }
         }
     }
-    private void fetchDataWithService() {
-        getActivity().startService(MarketUpdateService.newIntent(getActivity()));
+    private void fetchDataWithAsyncTask() {
+        new FetchStocksTask().execute(mStockSymbols);
     }
 
     // --------------------- recycler view ------------------------
@@ -249,7 +252,7 @@ public class PortfolioFragment extends Fragment {
             }
         }
 
-    // --------------------- loaders ------------------------------
+    // --------------------- async task ------------------------------
 
     private class FetchStocksTask extends AsyncTask<String, Void, Void> {
 
@@ -266,7 +269,7 @@ public class PortfolioFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            setRecyclerView();
+            setupAdapter();
         }
     }
 }

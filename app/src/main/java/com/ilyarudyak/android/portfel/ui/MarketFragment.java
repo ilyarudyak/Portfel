@@ -123,8 +123,10 @@ public class MarketFragment extends Fragment implements
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
     }
     private void setupAdapter() {
-        if (mIndicesAndStocks != null && mIndicesAndStocks.size() > 0) {
-            mRecyclerView.setAdapter(new MarketDataAdapter());
+        if (isAdded()) {
+            if (mIndicesAndStocks != null && mIndicesAndStocks.size() > 0) {
+                mRecyclerView.setAdapter(new MarketDataAdapter());
+            }
         }
     }
     private void fetchDataWithService() {
