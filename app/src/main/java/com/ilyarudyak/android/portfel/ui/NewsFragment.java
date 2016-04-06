@@ -154,11 +154,12 @@ public class NewsFragment extends Fragment {
             String urlStr = item.getImageLink();
 //            Log.d(TAG, "title=" + title.substring(0, 10) + " urlStr=" + urlStr);
             if (urlStr != null) {
+                holder.thumbnailImageView.setVisibility(View.VISIBLE);
                 Picasso.with(getActivity())
                         .load(urlStr)
                         .into(holder.thumbnailImageView);
             } else {
-                holder.thumbnailImageView.setVisibility(View.GONE);
+                holder.thumbnailImageView.setVisibility(View.INVISIBLE);
             }
 
             Date date = item.getPublicationDate();
