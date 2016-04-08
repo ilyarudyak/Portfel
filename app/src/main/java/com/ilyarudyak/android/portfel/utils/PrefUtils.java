@@ -23,6 +23,22 @@ public class PrefUtils {
 
     // --------- indices and stocks from market fragment ----------
 
+    public static void setDefaultSymbols(Context context) {
+
+        SharedPreferences.Editor symbolsEditor = context.getSharedPreferences(PREF_MARKET_SYMBOLS,
+                Context.MODE_PRIVATE).edit();
+
+        Set<String> defaultIndices = new HashSet<>(Arrays.asList(context.getResources()
+                .getStringArray(R.array.index_symbols_default)));
+        symbolsEditor.putStringSet(context.getString(R.string.pref_market_symbols_indices),
+                defaultIndices).apply();
+
+        Set<String> defaultStocks = new HashSet<>(Arrays.asList(context.getResources()
+                .getStringArray(R.array.stock_symbols_default)));
+        symbolsEditor.putStringSet(context.getString(R.string.pref_market_symbols_stocks),
+                defaultStocks).apply();
+
+    }
     public static Set<String> getSymbols(Context context, String symbolType) {
         String[] defaultSymbols;
         if (symbolType.equals(context.getString(R.string.pref_market_symbols_indices))) {
@@ -30,29 +46,22 @@ public class PrefUtils {
         } else {
             defaultSymbols = context.getResources().getStringArray(R.array.stock_symbols_default);
         }
-        return context.getSharedPreferences(PREF_MARKET_SYMBOLS, 0)
+        return context.getSharedPreferences(PREF_MARKET_SYMBOLS, Context.MODE_PRIVATE)
                 .getStringSet(symbolType, new HashSet<>(Arrays.asList(defaultSymbols)));
     }
     public static void putSymbol(Context context, String symbolType, String symbol) {
-
         Set<String> symbols = getSymbols(context, symbolType);
-        if (symbols == null) {
-            symbols = new HashSet<>();
-        }
         symbols.add(symbol);
-
-        // put updated set back into prefs file
-        SharedPreferences.Editor editor = context.getSharedPreferences(PREF_MARKET_SYMBOLS, 0).edit();
-        editor.putStringSet(symbolType, symbols).apply();
+        SharedPreferences.Editor symbolsEditor = context.getSharedPreferences(PREF_MARKET_SYMBOLS,
+                Context.MODE_PRIVATE).edit();
+        symbolsEditor.putStringSet(symbolType, symbols).apply();
     }
     public static void removeSymbol(Context context, String symbolType, String symbol) {
-
         Set<String> symbols = getSymbols(context, symbolType);
         symbols.remove(symbol);
-
-        // put updated set back into prefs file
-        SharedPreferences.Editor editor = context.getSharedPreferences(PREF_MARKET_SYMBOLS, 0).edit();
-        editor.putStringSet(symbolType, symbols).apply();
+        SharedPreferences.Editor symbolsEditor = context.getSharedPreferences(PREF_MARKET_SYMBOLS,
+                Context.MODE_PRIVATE).edit();
+        symbolsEditor.putStringSet(symbolType, symbols).apply();
     }
     public static boolean isIndex(Context context, String symbol) {
         Set<String> indices = getSymbols(context, context.getString(R.string.pref_market_symbols_indices));
@@ -67,29 +76,6 @@ public class PrefUtils {
         return context.getSharedPreferences(PREF_PORTFOLIO_STOCKS, Context.MODE_PRIVATE)
                       .getStringSet(context.getString(R.string.pref_market_symbols_stocks),
                               new HashSet<>(Arrays.asList(defaultPortfolioStocks)));
-    }
-    public static void putPortfolioStock(Context context, String stockSymbol) {
-
-        Set<String> stockSet = getPortfolioStocks(context);
-        if (stockSet == null) {
-            stockSet = new HashSet<>();
-        }
-        stockSet.add(stockSymbol);
-
-        // put updated set back into prefs file
-        SharedPreferences.Editor editor = context.getSharedPreferences(
-                PREF_MARKET_SYMBOLS, Context.MODE_PRIVATE).edit();
-        editor.putStringSet(context.getString(R.string.pref_market_symbols_stocks), stockSet).apply();
-    }
-    public static void removePortfolioStock(Context context, String stockSymbol) {
-
-        Set<String> stockSet = getPortfolioStocks(context);
-        stockSet.remove(stockSymbol);
-
-        // put updated set back into prefs file
-        SharedPreferences.Editor editor = context.getSharedPreferences(
-                PREF_MARKET_SYMBOLS, Context.MODE_PRIVATE).edit();
-        editor.putStringSet(context.getString(R.string.pref_market_symbols_stocks), stockSet).apply();
     }
 
     // ---------------------- misc methods ------------------------
