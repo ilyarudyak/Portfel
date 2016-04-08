@@ -50,25 +50,19 @@ public class MarketFragment extends Fragment implements
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private static String[] mIndexSymbols;
-    private static String[] mStockSymbols;
     private List<Stock> mIndicesAndStocks;
 
     // used to build S&P500 chart
     private static Stock mIndexSnP500;
 
-    /**
-     * these constants are used for recycler view with multiple parts:
-     *  1) chart 2) header indices 3) indices 4) header stocks 5) stocks
-     * */
     private static final int POSITION_CHART = 0;
     private static final int POSITION_HEADER_INDICES = 1;
-    // 2 = 1 position for image + 1 position for  indices header
     private static final int INDEX_POSITION_OFFSET = 2;
-    // 3 = 1 position for image + 2 positions for headers
-    private static final int ADDITIONAL_POSITIONS = 3;
-    // this is not const - it depends on mIndexSymbols length
-    private static int mPositionHeaderStock;
+    private static final int STOCK_POSITION_OFFSET = 3;
+
+    private int mNumberOfIndices;
+    private int mPositionHeaderStock;
+
 
     public static MarketFragment newInstance() {
         return new MarketFragment();
@@ -77,12 +71,11 @@ public class MarketFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // we store symbols to show in the fragment in shared prefs and use them to fetch info from yahoo
-        mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(),
-                getActivity().getString(R.string.pref_market_symbols_indices)));
-        mStockSymbols = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(),
-                getActivity().getString(R.string.pref_market_symbols_stocks)));
-        mPositionHeaderStock = INDEX_POSITION_OFFSET + mIndexSymbols.length;
+        mNumberOfIndices  = PrefUtils.getSymbols(getActivity(), getActivity()
+                .getString(R.string.pref_market_symbols_indices)).size();
+        mPositionHeaderStock = POSITION_HEADER_INDICES + mNumberOfIndices + 1;
 
         // we start service manually instead of using alarm - see comments in service
         if (savedInstanceState == null) {
@@ -172,14 +165,14 @@ public class MarketFragment extends Fragment implements
             } else if (position == mPositionHeaderStock) {
                 ((HeaderViewHolder) holder).bindModel(position);
             } else {
-                stock = mIndicesAndStocks.get(position - ADDITIONAL_POSITIONS);
+                stock = mIndicesAndStocks.get(position - STOCK_POSITION_OFFSET);
                 ((StockViewHolder) holder).bindModel(stock);
             }
         }
 
         @Override
         public int getItemCount() {
-            return mIndicesAndStocks.size() + ADDITIONAL_POSITIONS;
+            return mIndicesAndStocks.size() + STOCK_POSITION_OFFSET;
         }
 
         @Override
@@ -196,7 +189,7 @@ public class MarketFragment extends Fragment implements
             }
         }
     }
-    public static class ChartViewHolder extends RecyclerView.ViewHolder {
+    public class ChartViewHolder extends RecyclerView.ViewHolder {
 
         private Context context;
         private LineChart indexLineChart;
@@ -219,7 +212,7 @@ public class MarketFragment extends Fragment implements
             }
         }
     }
-    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
         private Context context;
 
@@ -334,7 +327,7 @@ public class MarketFragment extends Fragment implements
     }
 
     // helper methods
-    private void makeSnackBar(final Context context, View v, int adapterPosition) {
+    private void makeSnackBar(final Context context, View v, final int adapterPosition) {
         String textStr = context.getString(R.string.market_snackbar_text);
         String actionStr = context.getString(R.string.market_snackbar_action);
         final String symbolStr = mIndicesAndStocks.get(getIndex(adapterPosition)).getSymbol();
@@ -343,7 +336,7 @@ public class MarketFragment extends Fragment implements
                     @Override
                     public void onClick(View v) {
                         String deleteTextStr;
-                        if (deleteSymbol(context, symbolStr) > 0) {
+                        if (deleteSymbol(context, symbolStr, adapterPosition) > 0) {
                             deleteTextStr = String.format(context.getString(
                                     R.string.market_snackbar_text_deleted), symbolStr);
                         } else {
@@ -356,9 +349,25 @@ public class MarketFragment extends Fragment implements
         snackbar.getView().setBackgroundColor(getResources().getColor(R.color.primary));
         snackbar.show();
     }
-    private int deleteSymbol(Context context, String symbolStr) {
-        PrefUtils.removeSymbol(context, context.getString(
-                R.string.pref_market_symbols_stocks), symbolStr);
+    private int deleteSymbol(Context context, String symbolStr, int adapterPosition) {
+        if (POSITION_HEADER_INDICES < adapterPosition && adapterPosition < mPositionHeaderStock) {
+            // remove indices from shared prefs file
+            String indices = context.getString(R.string.pref_market_symbols_indices);
+            Log.d(TAG, PrefUtils.getSymbols(context, indices).toString());
+            PrefUtils.removeSymbol(context, indices, symbolStr);
+            Log.d(TAG, PrefUtils.getSymbols(context, indices).toString());
+
+            // correct number of indices and position os stocks header
+            mNumberOfIndices--;
+            mPositionHeaderStock--;
+        } else {
+            // remove stocks from shared prefs file
+            String stocks = context.getString(R.string.pref_market_symbols_stocks);
+            Log.d(TAG, PrefUtils.getSymbols(context, stocks).toString());
+            PrefUtils.removeSymbol(context, stocks, symbolStr);
+            Log.d(TAG, PrefUtils.getSymbols(context, stocks).toString());
+        }
+        // we have only one table in DB: both for indices and stocks
         return context.getContentResolver().delete(PortfolioContract.StockTable.CONTENT_URI,
                 PortfolioContract.StockTable.SYMBOL + " = '" + symbolStr + "'", null);
     }
@@ -366,7 +375,7 @@ public class MarketFragment extends Fragment implements
         if (POSITION_HEADER_INDICES < adapterPosition && adapterPosition < mPositionHeaderStock) {
             return adapterPosition - INDEX_POSITION_OFFSET;
         } else if (adapterPosition > mPositionHeaderStock) {
-            return adapterPosition - ADDITIONAL_POSITIONS;
+            return adapterPosition - STOCK_POSITION_OFFSET;
         } else {
             return -1;
         }
