@@ -1,6 +1,5 @@
 package yahoofinance.quotes.stock;
 
-import java.math.BigDecimal;
 import yahoofinance.Stock;
 import yahoofinance.Utils;
 import yahoofinance.exchanges.ExchangeTimeZone;

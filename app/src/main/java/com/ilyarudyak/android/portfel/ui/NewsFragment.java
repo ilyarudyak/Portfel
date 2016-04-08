@@ -9,7 +9,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +51,13 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
+
+        // we don't handle rotation here - Feed is not serializable
+        // and it's not easy to change that; but we handle rotation in Portfolio
+        // and we made Stock class serializable
+//        if (savedInstanceState != null) {
             fetchDataWithAsyncTask();
-        }
+//        }
 
         // get column number
         mColumnNumber = getResources().getInteger(R.integer.column_number);
@@ -82,7 +85,6 @@ public class NewsFragment extends Fragment {
 
     // helper methods
     private void fetchDataWithAsyncTask() {
-        Log.d(TAG, "fetching data...");
         new FetchNewsFeed().execute(Config.NEWS_URL);
     }
     private void setupRecyclerView() {

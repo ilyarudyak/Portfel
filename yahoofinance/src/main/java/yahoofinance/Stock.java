@@ -1,11 +1,13 @@
 package yahoofinance;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import yahoofinance.histquotes.HistQuotesRequest;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
@@ -19,7 +21,7 @@ import yahoofinance.quotes.stock.StockStats;
  *
  * @author Stijn Strickx
  */
-public class Stock {
+public class Stock implements Serializable {
 
     private final String symbol;
     private String name;

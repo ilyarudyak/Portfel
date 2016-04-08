@@ -26,7 +26,6 @@ import com.ilyarudyak.android.portfel.utils.PrefUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -34,8 +33,9 @@ import yahoofinance.YahooFinance;
 public class PortfolioFragment extends Fragment {
 
     public static final String TAG = PortfolioFragment.class.getSimpleName();
+    public static final String STOCKS = "stocks";
 
-    private List<Stock> mStocks;
+    private ArrayList<Stock> mStocks;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String[] mStockSymbols;
@@ -59,6 +59,8 @@ public class PortfolioFragment extends Fragment {
         mStockSymbols = PrefUtils.toArray(PrefUtils.getPortfolioStocks(getActivity()));
         if (savedInstanceState == null) {
             fetchDataWithAsyncTask();
+        } else {
+
         }
     }
 
@@ -78,7 +80,23 @@ public class PortfolioFragment extends Fragment {
             }
         });
 
+        if (savedInstanceState != null) {
+            //noinspection unchecked
+            mStocks = (ArrayList<Stock>) savedInstanceState.getSerializable(STOCKS);
+            if (mStocks != null) {
+                setupAdapter();
+            }
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mStocks != null) {
+            outState.putSerializable(STOCKS, mStocks);
+        }
     }
 
     // helper methods

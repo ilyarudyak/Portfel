@@ -77,7 +77,6 @@ public class MarketFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // we store symbols to show in the fragment in shared prefs and use them to fetch info from yahoo
         mIndexSymbols  = PrefUtils.toArray(PrefUtils.getSymbols(getActivity(),
                 getActivity().getString(R.string.pref_market_symbols_indices)));
@@ -87,7 +86,7 @@ public class MarketFragment extends Fragment implements
 
         // we start service manually instead of using alarm - see comments in service
         if (savedInstanceState == null) {
-            Log.d(TAG, "calling service from onCreate() ... ");
+            Log.d(TAG, "fetching data from onCreate() ... ");
             fetchDataWithService();
         }
     }
@@ -123,7 +122,6 @@ public class MarketFragment extends Fragment implements
         Drawable divider = getResources().getDrawable(R.drawable.padded_divider);
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration(divider));
 
-        Log.d(TAG, "setupRecyclerView() done");
     }
     private void setupAdapter() {
         if (isAdded()) {
