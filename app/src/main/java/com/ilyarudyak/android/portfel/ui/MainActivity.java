@@ -18,6 +18,7 @@ import com.ilyarudyak.android.portfel.service.MarketUpdateService;
 import com.ilyarudyak.android.portfel.settings.SettingsActivity;
 import com.ilyarudyak.android.portfel.ui.adapter.ViewPagerAdapter;
 import com.ilyarudyak.android.portfel.ui.dialog.AddStockDialogFragment;
+import com.ilyarudyak.android.portfel.utils.PrefUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set up default values
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        PrefUtils.setDefaultSymbols(this);
 
         // set up alarm for update service
         MarketUpdateService.setServiceAlarm(this, false);
