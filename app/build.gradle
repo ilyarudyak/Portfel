@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'ir-release'
             keyPassword 'Js5k8Ye6Zi'
-            storeFile file('$rootDir/ir-release.keystore')
+            storeFile file('ir-release.keystore')
             storePassword 'Js5k8Ye6Zi'
         }
     }
