@@ -7,13 +7,12 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
+        android:name=".analytics.PortfelApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Portfel"
         android:supportsRtl="true"
-        android:name=".analytics.PortfelApplication"
-        >
+        android:theme="@style/Theme.Portfel" >
 
         <!-- This meta-data tag is required to use Google Play Services. -->
         <meta-data
@@ -22,8 +21,7 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:label="@string/app_name"
-            >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,16 +34,15 @@
         </activity>
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="@string/settings_activity_label"
-            >
+            android:label="@string/settings_activity_label" >
         </activity>
 
         <provider
             android:name=".data.PortfolioProvider"
             android:authorities="com.ilyarudyak.android.portfel"
-            android:exported="false"/>
+            android:exported="false" />
 
-        <service android:name=".service.MarketUpdateService"/>
+        <service android:name=".service.MarketUpdateService" />
 
         <receiver android:name=".service.AlarmReceiver" >
             <intent-filter>
@@ -55,12 +52,14 @@
 
         <!-- service and broadcast receiver for stock widget -->
         <service android:name=".widget.StockWidgetService" />
+
         <receiver
             android:name=".widget.StockWidgetProvider"
             android:label="@string/widget_stock_title" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_stock_info" />
@@ -71,6 +70,6 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
-
     </application>
+
 </manifest>
